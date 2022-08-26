@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { ProductsTab } from '../API/vendorAPI';
 import { productsTabs } from '../App';
+import ModalNavBar from '../components/ModalNavBar';
 import NavBar from '../components/NavBar';
 
 interface mainMenuPageProps {
@@ -9,10 +10,13 @@ interface mainMenuPageProps {
 }
 
 const MainMenuPage:React.FC<mainMenuPageProps> = ({productsTab, productsTabsNames}) => {
+    const ref = useRef<HTMLDivElement>();
+
     return (
         <div>
-            <NavBar productsTabsNames={productsTabsNames} ></NavBar>
+            <NavBar reference={ref} productsTabsNames={productsTabsNames} ></NavBar>
             <div>{productsTab.name}</div>
+            <ModalNavBar reference={ref} productsTabsNames={productsTabsNames}/>
         </div>
     );
 };

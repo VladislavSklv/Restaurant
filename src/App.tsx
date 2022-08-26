@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { useGetProductsMenuQuery } from './API/vendorAPI';
-import NavBar from './components/NavBar';
 import MainMenuPage from './pages/MainMenuPage';
 
 export interface productsTabs {
@@ -23,13 +22,7 @@ function App() {
 			<Routes>
 				{products !== undefined && 
 					products.map((product, i) => (
-						i === 0
-						? 
-							<>
-								<Route path={`/`} element={<MainMenuPage productsTab={product} productsTabsNames={productsTabsNames} />} />
-								<Route path={`/${product.id}`} element={<MainMenuPage productsTab={product} productsTabsNames={productsTabsNames} />} />
-							</>
-						: <Route path={`/${product.id}`} element={<MainMenuPage productsTab={product} productsTabsNames={productsTabsNames} />} />
+						<Route path={i === 0 ? `/`: `/${product.id}`} key={product.id} element={<MainMenuPage productsTab={product} productsTabsNames={productsTabsNames} />} />
 					))}
 			</Routes>
 		</BrowserRouter>
