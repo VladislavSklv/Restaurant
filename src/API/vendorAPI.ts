@@ -1,6 +1,6 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
 
-export interface Product {
+export interface IProduct {
     id: string;
     description: string;
     image: string;
@@ -10,10 +10,10 @@ export interface Product {
     weight: string;
 }
 
-export interface ProductsTab {
+export interface IProductsTab {
     id: string;
     name: string;
-    products: Product[];
+    products: IProduct[];
 }
 
 export interface ProductMenuProps{
@@ -47,7 +47,7 @@ export const vendorApi = createApi({
     reducerPath: 'vendorApi',
     baseQuery: fetchBaseQuery({baseUrl: 'https://etoolz.ru/api/v1/vendor/'}),
     endpoints: (builder) => ({
-        getProductsMenu: builder.query<ProductsTab[], ProductMenuProps>({
+        getProductsMenu: builder.query<IProductsTab[], ProductMenuProps>({
             query: ({vendorId}) => `${vendorId}/menu/`,
         }),
         getProductDetails: builder.query<ProductDetails, ProductDetailsProps>({
