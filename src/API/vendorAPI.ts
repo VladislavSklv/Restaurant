@@ -20,13 +20,13 @@ export interface ProductMenuProps{
     vendorId: number;
 }
 
-export interface Ingredient {
+export interface IIngredient {
     id: string;
     name: string;
     price: number;
 }
 
-export interface ProductDetails {
+export interface IProductDetails {
     id: string;
     description: string;
     image: string;
@@ -35,7 +35,7 @@ export interface ProductDetails {
     price: number;
     weight: string;
     ingredientGroups: any[];
-    ingredients: Ingredient[];
+    ingredients: IIngredient[];
 }
 
 export interface ProductDetailsProps{
@@ -50,7 +50,7 @@ export const vendorApi = createApi({
         getProductsMenu: builder.query<IProductsTab[], ProductMenuProps>({
             query: ({vendorId}) => `${vendorId}/menu/`,
         }),
-        getProductDetails: builder.query<ProductDetails, ProductDetailsProps>({
+        getProductDetails: builder.query<IProductDetails, ProductDetailsProps>({
             query: ({vendorId, productId}) => `${vendorId}/product/${productId}/`,
         }),
     }),

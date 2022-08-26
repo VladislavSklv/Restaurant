@@ -14,18 +14,14 @@ function App() {
 	const {data: products, isLoading, isError} = useGetProductsMenuQuery(productProps);
 	const [totalPrice, setTotalPrice] = useState(0);
 	
-	let productsTabsNames: productsTabs[] = [];
-	products?.map(productTab => {
-		productsTabsNames.push({name: productTab.name, id: productTab.id});
-	});
-
 	return (
 		<BrowserRouter>
 			<Routes>
-				{products !== undefined && 
+				{/* {products !== undefined && 
 					products.map((product, i) => (
 						<Route path={i === 0 ? `/`: `/${product.id}`} key={product.id} element={<MainMenuPage totalPrice={totalPrice} setTotalPrice={setTotalPrice} productsTab={product} productsTabsNames={productsTabsNames} />} />
-					))}
+					))} */}
+				{products !== undefined && <Route path='/' element={<MainMenuPage totalPrice={totalPrice} setTotalPrice={setTotalPrice} productsTabs={products} />} />}
 				<Route path='/details/:id/:numberOf' element={<ProductDetailsPage vendorId={productProps.vendorId}/>}/>
 			</Routes>
 		</BrowserRouter>

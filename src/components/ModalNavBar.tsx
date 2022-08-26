@@ -1,30 +1,36 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { navBarProps } from './NavBar';
+import { productsTabs } from '../App';
 
-const ModalNavBar: React.FC<navBarProps> = ({productsTabsNames, reference, opacityRef}) => {
+export interface modalNavBarProps {
+    productsTabsNames: productsTabs[];
+    setIsOpacity: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsModal: React.Dispatch<React.SetStateAction<boolean>>;
+    isModal: boolean;
+}
+
+const ModalNavBar: React.FC<modalNavBarProps> = ({productsTabsNames, setIsModal, setIsOpacity, isModal}) => {
     return (
-        <div ref={reference} className='modal'>
+        <div style={isModal ? {'bottom': '0'} : {'bottom': '-100%'} } className='modal'>
             <div className='modal__title'>
                 <div 
                     className='cross' 
                     onClick={() => {
-                        reference.current.style.bottom = '-100%';
-                        opacityRef.current.style.opacity = '0';
+                        setIsModal(false);
+                        setIsOpacity(false);
                     }}
                 ><span></span><span></span></div> 
             Меню</div>
             <div className='modal__hrefs'>
                 {productsTabsNames.map((productTab, i) => (
-                    <NavLink 
+                    <a 
                         className='modal__href' 
                         onClick={() => {
-                            reference.current.style.bottom = '-100%';
-                            opacityRef.current.style.opacity = '0';
+                            setIsModal(false);
+                            setIsOpacity(false);
                         }} 
-                        to={i === 0 ? `/` : `/${productTab.id}`} 
+                        href={`#${productTab.id}`} 
                         key={productTab.id}
-                    >{productTab.name}</NavLink>
+                    >{productTab.name}</a>
                 ))}
             </div>
         </div>

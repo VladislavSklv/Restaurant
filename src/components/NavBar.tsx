@@ -1,21 +1,20 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
 import { productsTabs } from '../App';
 
 export interface navBarProps {
     productsTabsNames: productsTabs[];
-    reference: React.MutableRefObject<HTMLDivElement> | any;
-    opacityRef: React.MutableRefObject<HTMLDivElement> | any;
+    setIsOpacity: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const NavBar:React.FC<navBarProps> = ({productsTabsNames, reference, opacityRef}) => {
+const NavBar:React.FC<navBarProps> = ({productsTabsNames, setIsModal, setIsOpacity}) => {
     return (
         <div className='navbar'>
             <div 
                 className='hamburger'
                 onClick={() => {    
-                    reference.current.style.bottom = '0px';
-                    opacityRef.current.style.opacity = '0.54';
+                    setIsModal(true);
+                    setIsOpacity(true);
                 }}
             >
                 <span className='hamburger__block'></span>
@@ -24,9 +23,7 @@ const NavBar:React.FC<navBarProps> = ({productsTabsNames, reference, opacityRef}
             </div>
             <div className='navbar__wrapper'>
                 {productsTabsNames.map((productTab, i) => (
-                    i === 0 
-                    ? <NavLink to={`/`} className='navbar__href' key={productTab.id}>{productTab.name}</NavLink>
-                    : <NavLink to={`/${productTab.id}`} className='navbar__href' key={productTab.id}>{productTab.name}</NavLink>
+                    <a href={`#${productTab.id}`} className='navbar__href' key={productTab.id}>{productTab.name}</a>
                 ))}
             </div>
         </div>

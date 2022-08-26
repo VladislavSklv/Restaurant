@@ -1,43 +1,51 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IProductsTab } from '../API/vendorAPI';
 import { productsTabs } from '../App';
 import ModalNavBar from '../components/ModalNavBar';
 import NavBar from '../components/NavBar';
-import Product from '../components/Product';
+import ProductsList from '../components/ProductsList';
 
 interface mainMenuPageProps {
-    productsTab: IProductsTab;
-    productsTabsNames: productsTabs[];
+    productsTabs: IProductsTab[];
     totalPrice: number;
     setTotalPrice: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const MainMenuPage:React.FC<mainMenuPageProps> = ({productsTab, productsTabsNames, totalPrice, setTotalPrice}) => {
-    const ref = useRef<HTMLDivElement>();
-    const opacityRef = useRef<HTMLDivElement | any>();
+const MainMenuPage:React.FC<mainMenuPageProps> = ({productsTabs, totalPrice, setTotalPrice}) => {
+    const [isOpacity, setIsOpacity] = useState(false);
+    const [isModal, setIsModal] = useState(false);
+    const [activeTab, setActiveTab] = useState(productsTabs[0].id);
 
-    const tg = Telegram.WebApp;
+    let productsTabsNames: productsTabs[] = [];
+	productsTabs.map(productTab => {
+		productsTabsNames.push({name: productTab.name, id: productTab.id});
+	});
+
+   /*  const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if(entry.isIntersecting) {
+                setActiveTab();
+            }
+        });
+    }, {
+        threshold: 0.8,
+    }); */
 
     useEffect(() => {
         if(totalPrice !== 0) {
-            tg.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': 'Перейти к оформлению заказа'})
+            Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': `Заказать ${totalPrice} ₽`})
         } else {
-            tg.MainButton.isVisible = false;
+            Telegram.WebApp.MainButton.isVisible = false;
         }
     }, [totalPrice]);
 
     return (
         <div>
-            <NavBar opacityRef={opacityRef} reference={ref} productsTabsNames={productsTabsNames} ></NavBar>
+            <NavBar setIsModal={setIsModal} setIsOpacity={setIsOpacity} productsTabsNames={productsTabsNames} ></NavBar>
             <div className='mainMenu'>
-                <div className='title'>{productsTab.name}</div>
-                <div className='menu__wrapper'>
-                    {productsTab.products.map(product => (
-                        <Product key={product.id} setTotalPrice={setTotalPrice} product={product} />
-                    ))}
-                </div>
-                <div ref={opacityRef} className='opacity-block'></div>
-                <ModalNavBar opacityRef={opacityRef} reference={ref} productsTabsNames={productsTabsNames}/>
+                <ProductsList productsTabs={productsTabs} setTotalPrice={setTotalPrice} />
+            <div style={isOpacity ? {'opacity': '0.54'} : {'opacity' : '0'}} className='opacity-block'></div>
+            <ModalNavBar isModal={isModal} setIsModal={setIsModal} setIsOpacity={setIsOpacity} productsTabsNames={productsTabsNames}/>
             </div>
         </div>
     );

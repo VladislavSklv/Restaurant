@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useGetProductDetailsQuery } from '../API/vendorAPI';
+import MinMaxBtns from '../components/UI/MinMaxBtns';
 
 interface productDetailsPageProps{
     vendorId: number;
@@ -10,14 +11,34 @@ const ProductDetailsPage: React.FC<productDetailsPageProps> = ({vendorId}) => {
     const {id, numberOf} = useParams();
     const {isLoading, isError, data: details} = useGetProductDetailsQuery({productId: id!, vendorId});
     const [newNumberOf, setNewNumberOf] = useState(parseInt(numberOf!));
-    const [price, setPrice] = useState(newNumberOf * details!.price);
+    const [price, setPrice] = useState(0);
 
     useEffect(() => {
-        if(details != undefined && numberOf != undefined) {
+        if(details !== undefined){
+            setPrice(newNumberOf * details!.price);
+        };
+    }, [details]);
+
+    useEffect(() => {
+        if(details != undefined && numberOf != undefined && price > 0) {
+            Telegram.WebApp.MainButton.isVisible = true;
             Telegram.WebApp.MainButton.text = `Добавить к заказу | ${price} ₽`
-        } 
-        console.log(price);
+        } else {
+            Telegram.WebApp.MainButton.isVisible = false;
+        };
     }, [price]);
+
+    const onClickMinHandler = () => {
+        if(newNumberOf > 0) {
+            setNewNumberOf(prev => prev - 1);
+            setPrice(prev => prev -= details!.price)
+        };
+    };
+
+    const onClickMaxHandler = () => {
+        setNewNumberOf(prev => prev + 1);
+        setPrice(prev => prev += details!.price);
+    }
 
     return (
         <>
@@ -30,25 +51,7 @@ const ProductDetailsPage: React.FC<productDetailsPageProps> = ({vendorId}) => {
                     : <p className='product-id__descr'>{details.description}</p>
                 }
                 <h2 className='title'>Выберите количество</h2>
-                <div className='product__numberof'>
-                    <button 
-                        className="product__btn_min"
-                        onClick={() => {
-                            if(newNumberOf > 0) {
-                                setNewNumberOf(prev => prev - 1);
-                                setPrice(prev => prev -= details.price)
-                            }
-                        }} 
-                    ><span></span></button>
-                    <div onClick={(e) => e.stopPropagation()}>{newNumberOf} шт.</div>
-                    <button 
-                        className="product__btn_min"
-                        onClick={() => {
-                            setNewNumberOf(prev => prev + 1);
-                            setPrice(prev => prev += details.price)
-                        }} 
-                    ><span></span><span></span></button>
-                </div>
+                <MinMaxBtns numberOf={newNumberOf} onClickMin={onClickMinHandler} onClickMax={onClickMaxHandler} />
                 <h2 className='title'>Выберите состав</h2>
                 {details.ingredientGroups.length > 0 && details.ingredientGroups.map((ingredient, i) => (
                     <div key={details.id + details.image + i} className='modal__href'><span>{ingredient.name}</span><button className='product-id__btn'>Выбрать</button></div>

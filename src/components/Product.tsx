@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IProduct } from '../API/vendorAPI';
+import MinMaxBtns from './UI/MinMaxBtns';
 
 interface productProps {
     product: IProduct;
@@ -11,6 +12,19 @@ const Product:React.FC<productProps> = ({product, setTotalPrice}) => {
     const [numberOf, setNumberOf] = useState(0);
     const productRef = useRef<HTMLDivElement | any>();
     const navigate = useNavigate();
+
+    const onClickMinHandler = () => {
+        if(numberOf === 1) {
+            productRef.current.style.boxShadow = '0px 3px 12px rgba(0, 0, 0, 0.06)';
+        };
+        setNumberOf(prev => prev - 1);
+        setTotalPrice(prev => prev -= product.price);
+    };
+
+    const onClickMaxHandler = () => {
+        setNumberOf(prev => prev + 1);
+        setTotalPrice(prev => prev += product.price);
+    };
 
     return (
         <div ref={productRef} className='product'>
@@ -31,27 +45,7 @@ const Product:React.FC<productProps> = ({product, setTotalPrice}) => {
                         }}
                         className='product__btn'
                     >{product.price} ₽</button>
-                    : 
-                    <div className='product__numberof'>
-                        <button 
-                            className="product__btn_min" 
-                            onClick={() => {
-                                if(numberOf === 1) {
-                                    productRef.current.style.boxShadow = '0px 3px 12px rgba(0, 0, 0, 0.06)';
-                                };
-                                setNumberOf(prev => prev - 1);
-                                setTotalPrice(prev => prev -= product.price);
-                            }}
-                        ><span></span></button>
-                        <div onClick={(e) => e.stopPropagation()}>{numberOf} шт.</div>
-                        <button 
-                            className="product__btn_min" 
-                            onClick={() => {
-                                setNumberOf(prev => prev + 1);
-                                setTotalPrice(prev => prev += product.price);
-                            }}
-                        ><span></span><span></span></button>
-                    </div>
+                    : <MinMaxBtns numberOf={numberOf} onClickMax={onClickMaxHandler} onClickMin={onClickMinHandler} />
                 }
             </div>
         </div>

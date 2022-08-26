@@ -4,6 +4,10 @@
 	box-sizing: border-box;
 }
 
+html{
+	scroll-behavior: smooth;
+}
+
 body {
 	margin: 0;
 	background-color: #fff;
@@ -19,7 +23,7 @@ code {
 }
 
 .mainMenu{
-	padding: 44px 11px 0;
+	padding: 0 11px 0;
 }
 
 .mainMenu > .title{
@@ -370,4 +374,8 @@ code {
 	text-align: center;
 	letter-spacing: -0.154px;
 	color: #424950;
+}
+
+.pt-54px{
+	padding-top: 54px;
 }
