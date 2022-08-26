@@ -1,26 +1,39 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { useGetProductsMenuQuery } from './API/vendorAPI';
+import NavBar from './components/NavBar';
+import MainMenuPage from './pages/MainMenuPage';
+
+export interface productsTabs {
+	name: string;
+	id: string;
+}
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	const productProps = {vendorId: 81225};
+	const {data: products, isLoading, isError} = useGetProductsMenuQuery(productProps);
+	
+	let productsTabsNames: productsTabs[] = [];
+	products?.map(productTab => {
+		productsTabsNames.push({name: productTab.name, id: productTab.id});
+	});
+
+	return (
+		<BrowserRouter>
+			<Routes>
+				{products !== undefined && 
+					products.map((product, i) => (
+						i === 0
+						? 
+							<>
+								<Route path={`/`} element={<MainMenuPage productsTab={product} productsTabsNames={productsTabsNames} />} />
+								<Route path={`/${product.id}`} element={<MainMenuPage productsTab={product} productsTabsNames={productsTabsNames} />} />
+							</>
+						: <Route path={`/${product.id}`} element={<MainMenuPage productsTab={product} productsTabsNames={productsTabsNames} />} />
+					))}
+			</Routes>
+		</BrowserRouter>
+	);
 }
 
 export default App;
