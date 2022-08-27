@@ -6,9 +6,11 @@ export interface navBarProps {
     isHamburger: boolean;
     setIsOpacity?: React.Dispatch<React.SetStateAction<boolean>>;
     setIsModal?: React.Dispatch<React.SetStateAction<boolean>>;
+    activeTab?: string;
+    setActiveTab?: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const NavBar:React.FC<navBarProps> = ({productsTabsNames, setIsModal, setIsOpacity, isHamburger}) => {
+const NavBar:React.FC<navBarProps> = ({productsTabsNames, setIsModal, setIsOpacity, isHamburger, activeTab, setActiveTab}) => {
     return (
         <div className='navbar'>
             {isHamburger && setIsOpacity && setIsModal &&
@@ -26,7 +28,14 @@ const NavBar:React.FC<navBarProps> = ({productsTabsNames, setIsModal, setIsOpaci
             }
             <div className='navbar__wrapper'>
                 {productsTabsNames.map(productTab => (
-                    <a href={`#${productTab.id}`} className='navbar__href' key={productTab.id}>{productTab.name}</a>
+                    <a 
+                        href={`#${productTab.id}`} 
+                        className={activeTab == productTab.id ? 'navbar__href active' : 'navbar__href'} 
+                        key={productTab.id}
+                        onClick={() => {
+                            if(setActiveTab) setActiveTab(productTab.id);
+                        }}
+                    >{productTab.name}</a>
                 ))}
             </div>
         </div>

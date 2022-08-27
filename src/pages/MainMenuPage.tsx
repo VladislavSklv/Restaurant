@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { IProductsTab } from '../API/vendorAPI';
 import { productsTabs } from '../App';
 import ModalNavBar from '../components/ModalNavBar';
@@ -22,16 +22,6 @@ const MainMenuPage:React.FC<mainMenuPageProps> = ({productsTabs, totalPrice, set
 		productsTabsNames.push({name: productTab.name, id: productTab.id});
 	});
 
-   /*  const observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            if(entry.isIntersecting) {
-                setActiveTab();
-            }
-        });
-    }, {
-        threshold: 0.8,
-    }); */
-
     useEffect(() => {
         if(totalPrice !== 0) {
             Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': `Заказать ${totalPrice} ₽`})
@@ -42,11 +32,11 @@ const MainMenuPage:React.FC<mainMenuPageProps> = ({productsTabs, totalPrice, set
 
     return (
         <div>
-            <NavBar setIsModal={setIsModal} setIsOpacity={setIsOpacity} productsTabsNames={productsTabsNames} isHamburger={true} ></NavBar>
+            <NavBar activeTab={activeTab} setActiveTab={setActiveTab} setIsModal={setIsModal} setIsOpacity={setIsOpacity} productsTabsNames={productsTabsNames} isHamburger={true} ></NavBar>
             <div className='mainMenu'>
-                <ProductsList productsTabs={productsTabs} setTotalPrice={setTotalPrice} />
+                <ProductsList setActiveTab={setActiveTab} productsTabs={productsTabs} setTotalPrice={setTotalPrice} />
             <div style={isOpacity ? {'opacity': '0.54'} : {'opacity' : '0'}} className='opacity-block'></div>
-            <ModalNavBar isModal={isModal} setIsModal={setIsModal} setIsOpacity={setIsOpacity} productsTabsNames={productsTabsNames}/>
+            <ModalNavBar activeTab={activeTab} setActiveTab={setActiveTab} isModal={isModal} setIsModal={setIsModal} setIsOpacity={setIsOpacity} productsTabsNames={productsTabsNames}/>
             </div>
         </div>
     );

@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useGetProductsMenuQuery } from '../API/vendorAPI';
 import ProductInCart from '../components/ProductInCart';
 import MinMaxBtns from '../components/UI/MinMaxBtns';
 
 const CartPage: React.FC = () => {
     const {data: products} = useGetProductsMenuQuery({vendorId: 81225});
+
+    useEffect(() => {
+        Telegram.WebApp.MainButton.setParams({'is_visible': true, 'text': 'Заказать | 349 ₽'})
+    }, [])
 
     return (
         <div className='cart'>

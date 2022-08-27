@@ -25,11 +25,13 @@ const ModalComposition:React.FC<modalCompositionProps> = ({ingredientsMainGroup,
     useEffect(() => {
         if(ingredientsMainGroup.length > 0) setActiveTab(ingredientsMainGroup[0].id);
         else if(ingredientsOptional.length > 0) setActiveTab('optional');
-        Telegram.WebApp.MainButton.setParams({'is_visible': true, 'text': 'Готово'});
-        Telegram.WebApp.MainButton.onClick(() => {
-            navigate('/cart');
-        });
-    }, []);
+        if(isModalComp){
+            Telegram.WebApp.MainButton.setParams({'is_visible': true, 'text': 'Готово'});
+            Telegram.WebApp.MainButton.onClick(() => {
+                navigate('/cart');
+            });
+        }
+    }, [isModalComp]);
 
     return (
         <div className={isModalComp ? 'modal-comp modal-comp_active' : 'modal-comp'}>

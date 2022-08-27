@@ -166,19 +166,20 @@ code {
 }
 
 .modal__hrefs > .active::after{
-	content: '✔';
+	content: url(../public/tick.svg);
 	position: absolute;
 	display: flex;
 	justify-content: center;
-	align-items: center;
+	align-items: flex-end;
+	flex-grow: 0;
+	flex-shrink: 0;
 	background: #3F8AE0;
 	border-radius: 100%;
 	bottom: 11px;
 	left: calc(100% - 36px);
-	width: 24px;
-	height: 24px;
+	width: 25px;
+	height: 25px;
 	color: #fff;
-	overflow: scroll;
 }
 
 .modal__href{
@@ -445,11 +446,11 @@ code {
 .custom-radio+label::before {
 	content: '';
 	display: flex;
+	align-items: flex-end;
 	justify-content: center;
-	align-items: center;
 	color: #fff;
-	width: 24px;
-	height: 24px;
+	width: 25px;
+	height: 25px;
 	flex-shrink: 0;
 	flex-grow: 0;
 	border: 2px solid #B8C1CC;
@@ -458,14 +459,14 @@ code {
 	background-repeat: no-repeat;
 	background-position: center center;
 	background-size: 50% 50%;
-	transition: all 300ms;
+	transition: all 150ms;
 }
 
 .custom-checkbox+label::before {
 	content: '';
 	display: flex;
 	justify-content: center;
-	align-items: center;
+	align-items: flex-start;
 	color: #fff;
 	width: 20px;
 	height: 20px;
@@ -477,6 +478,7 @@ code {
 	background-repeat: no-repeat;
 	background-position: center center;
 	background-size: 50% 50%;
+	transition: all 150ms;
   }
 
 .custom-radio:not(:disabled):active+label::before, .custom-checkbox:active+label::before {
@@ -484,7 +486,8 @@ code {
 }
 
 .custom-radio:checked+label::before, .custom-checkbox:checked+label::before {
-	content: '✔';
+	color: #fff;
+	content: url(../public/tick.svg);
     background-color: #3F8AE0;
 	border-color: #3F8AE0;
 }
