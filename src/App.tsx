@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { useGetProductsMenuQuery } from './API/vendorAPI';
+import CartPage from './pages/CartPage';
 import MainMenuPage from './pages/MainMenuPage';
 import ProductDetailsPage from './pages/ProductDetailsPage';
 
@@ -17,12 +18,9 @@ function App() {
 	return (
 		<BrowserRouter>
 			<Routes>
-				{/* {products !== undefined && 
-					products.map((product, i) => (
-						<Route path={i === 0 ? `/`: `/${product.id}`} key={product.id} element={<MainMenuPage totalPrice={totalPrice} setTotalPrice={setTotalPrice} productsTab={product} productsTabsNames={productsTabsNames} />} />
-					))} */}
 				{products !== undefined && <Route path='/' element={<MainMenuPage totalPrice={totalPrice} setTotalPrice={setTotalPrice} productsTabs={products} />} />}
 				<Route path='/details/:id/:numberOf' element={<ProductDetailsPage vendorId={productProps.vendorId}/>}/>
+				<Route path='/cart' element={<CartPage />}/>
 			</Routes>
 		</BrowserRouter>
 	);

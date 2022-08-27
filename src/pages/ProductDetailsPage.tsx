@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useGetProductDetailsQuery } from '../API/vendorAPI';
+import ModalComposition from '../components/ModalComposition';
 import MinMaxBtns from '../components/UI/MinMaxBtns';
 
 interface productDetailsPageProps{
@@ -12,6 +13,8 @@ const ProductDetailsPage: React.FC<productDetailsPageProps> = ({vendorId}) => {
     const {isLoading, isError, data: details} = useGetProductDetailsQuery({productId: id!, vendorId});
     const [newNumberOf, setNewNumberOf] = useState(parseInt(numberOf!));
     const [price, setPrice] = useState(0);
+    const [isModalComp, setIsModalComp] = useState(false);
+    const [activeTab, setActiveTab] = useState('');
 
     useEffect(() => {
         if(details !== undefined){
@@ -38,7 +41,7 @@ const ProductDetailsPage: React.FC<productDetailsPageProps> = ({vendorId}) => {
     const onClickMaxHandler = () => {
         setNewNumberOf(prev => prev + 1);
         setPrice(prev => prev += details!.price);
-    }
+    };
 
     return (
         <>
@@ -54,9 +57,26 @@ const ProductDetailsPage: React.FC<productDetailsPageProps> = ({vendorId}) => {
                 <MinMaxBtns numberOf={newNumberOf} onClickMin={onClickMinHandler} onClickMax={onClickMaxHandler} />
                 <h2 className='title'>Выберите состав</h2>
                 {details.ingredientGroups.length > 0 && details.ingredientGroups.map((ingredient, i) => (
-                    <div key={details.id + details.image + i} className='modal__href'><span>{ingredient.name}</span><button className='product-id__btn'>Выбрать</button></div>
+                    <div key={details.id + details.image + i} className='modal__href'><span>{ingredient.name}</span>
+                        <button 
+                            className='product-id__btn'
+                            onClick={() => {
+                                setIsModalComp(true);
+                                setActiveTab(ingredient.id);
+                            }}
+                        >Выбрать</button>
+                    </div>
                 ))}
-                {details.ingredients.length > 0 && <div className='modal__href'><span>Дополнительно</span><button className='product-id__btn'>Выбрать</button></div>}
+                {details.ingredients.length > 0 && <div className='modal__href'><span>Дополнительно</span>
+                    <button 
+                        className='product-id__btn'
+                        onClick={() => {
+                            setIsModalComp(true);
+                            setActiveTab('optional');
+                        }}
+                    >Добавить</button>
+                </div>}
+                {details.ingredients.length > 0 && <ModalComposition activeTab={activeTab} setActiveTab={setActiveTab} isModalComp={isModalComp} setIsModalComp={setIsModalComp} ingredientsMainGroup={details.ingredientGroups} ingredientsOptional={details.ingredients}/>}
             </div>}
         </>
     );

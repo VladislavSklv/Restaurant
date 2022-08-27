@@ -4,6 +4,7 @@ import { productsTabs } from '../App';
 import ModalNavBar from '../components/ModalNavBar';
 import NavBar from '../components/NavBar';
 import ProductsList from '../components/ProductsList';
+import CartPage from './CartPage';
 
 interface mainMenuPageProps {
     productsTabs: IProductsTab[];
@@ -41,7 +42,7 @@ const MainMenuPage:React.FC<mainMenuPageProps> = ({productsTabs, totalPrice, set
 
     return (
         <div>
-            <NavBar setIsModal={setIsModal} setIsOpacity={setIsOpacity} productsTabsNames={productsTabsNames} ></NavBar>
+            <NavBar setIsModal={setIsModal} setIsOpacity={setIsOpacity} productsTabsNames={productsTabsNames} isHamburger={true} ></NavBar>
             <div className='mainMenu'>
                 <ProductsList productsTabs={productsTabs} setTotalPrice={setTotalPrice} />
             <div style={isOpacity ? {'opacity': '0.54'} : {'opacity' : '0'}} className='opacity-block'></div>

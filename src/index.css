@@ -18,6 +18,11 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 }
 
+html::-webkit-scrollbar {
+	width: 0;
+	height: 0;
+}
+
 code {
 	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
@@ -275,6 +280,12 @@ code {
 	text-align: center;
 	letter-spacing: -0.154px;
 	color: #424950;
+	transition: all 150ms;
+	cursor: pointer;
+}
+
+.product__btn:active{
+	background: #d1d1d1;
 }
 
 .product__numberof{
@@ -297,6 +308,14 @@ code {
 	border: none;
 	background: #F2F3F5;
 	border-radius: 4px;
+	transition: all 150ms;
+	cursor: pointer;
+	flex-grow: 0;
+	flex-shrink: 0;
+}
+
+.product__btn_min:active{
+	background: #d1d1d1;
 }
 
 .product__btn_min > span{
@@ -305,6 +324,8 @@ code {
 	width: 20px;
 	border-radius: 2px;
 	background-color: rgba(66, 73, 80, 1);
+	flex-grow: 0;
+	flex-shrink: 0;
 }
 
 .product__btn_min > span:nth-child(2){
@@ -374,8 +395,201 @@ code {
 	text-align: center;
 	letter-spacing: -0.154px;
 	color: #424950;
+	transition: all 150ms;
+	cursor: pointer;
 }
 
+.product-id__btn:active{
+	background: #d1d1d1;
+}
 .pt-54px{
 	padding-top: 54px;
+}
+
+.modal-comp{
+	position: fixed;
+	width: 100%;
+	min-height: 100vh;
+	bottom: -100%;
+	transition: all 300ms;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	background-color: #fff;
+}
+
+.modal-comp_active{
+	bottom: 0;
+}
+
+.modal-comp > .navbar {
+	position: relative;
+	margin-bottom: 10px;
+}
+
+.modal-comp > .navbar > .navbar__wrapper > .navbar__href {
+	white-space: nowrap;
+}
+
+.custom-radio, .custom-checkbox {
+	position: absolute;
+	z-index: -1;
+	opacity: 0;
+}
+
+.custom-radio+label, .custom-checkbox+label {
+	display: inline-flex;
+	align-items: center;
+	user-select: none;
+}
+
+.custom-radio+label::before {
+	content: '';
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: #fff;
+	width: 24px;
+	height: 24px;
+	flex-shrink: 0;
+	flex-grow: 0;
+	border: 2px solid #B8C1CC;
+	border-radius: 100%;
+	margin-right: 10px;
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-size: 50% 50%;
+	transition: all 300ms;
+}
+
+.custom-checkbox+label::before {
+	content: '';
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: #fff;
+	width: 20px;
+	height: 20px;
+	flex-shrink: 0;
+	flex-grow: 0;
+	border: 2px solid #adb5bd;
+	border-radius: 0.25em;
+	margin-right: 12px;
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-size: 50% 50%;
+  }
+
+.custom-radio:not(:disabled):active+label::before, .custom-checkbox:active+label::before {
+    background-color: #B8C1CC;
+}
+
+.custom-radio:checked+label::before, .custom-checkbox:checked+label::before {
+	content: '✔';
+    background-color: #3F8AE0;
+	border-color: #3F8AE0;
+}
+
+.options__tab{
+	position: absolute;
+	width: 100%;
+	top: 54px;
+	display: none;
+	transition: all 300ms;
+}
+
+.options__tab_active{
+	display: block;
+}
+
+.options__item{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	height: 48px;
+	background: #FFFFFF;
+	box-shadow: inset 0px -1px 0px rgba(0, 0, 0, 0.09);
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 24px;
+	display: flex;
+	align-items: center;
+	color: rgba(0, 0, 0, 0.87);
+	padding: 0 12px 0 28px;
+}
+
+.cart__title-with-icon{
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+	align-items: center;
+	padding: 18px 16px;
+}
+
+.cart-item{
+	position: relative;
+	display: flex;
+	min-height: 92px;
+	width: 100%;
+	background: #FFFFFF;
+	box-shadow: inset 0px -1px 0px rgba(0, 0, 0, 0.09);
+	padding: 12px 16px;
+}
+
+.cart-item > .cart-item__img {
+	width: 64px;
+	border-radius: 4px;
+	flex-grow: 0;
+	flex-shrink: 0;
+	margin-right: 12px;
+}
+
+.cart-item > .cart-item__img > img {
+	width: 100%;
+	border-radius: 4px;
+}
+
+.cart-item__content{
+	width: 100%;
+}
+
+.cart-item__title{
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+	align-items: center;
+	font-weight: 400;
+	font-size: 12px;
+	line-height: 14px;
+	color: rgba(0, 0, 0, 0.87);
+	margin-bottom: 6px;
+}
+
+.cart-item__price{
+	font-weight: 500;
+	font-size: 14px;
+	line-height: 16px;
+	color: rgba(0, 0, 0, 0.87);
+}
+
+.cart-item__ingredients{
+	font-weight: 400;
+	font-size: 12px;
+	line-height: 14px;
+	color: #818C99;
+	margin-bottom: 6px;
+}
+
+.cart-item > .cart-item__content > .product__numberof > .product__btn_min {
+	position: static;
+	width: 28px;
+	height: 28px;
+}
+
+.cart-item > .cart-item__content > .product__numberof > .product__btn_min > span {
+	width: 14px;
+}
+
+.cart-item > .cart-item__content > .product__numberof {
+	position: static;
+	width: 92px;
 }

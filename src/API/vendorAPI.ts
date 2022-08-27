@@ -26,6 +26,12 @@ export interface IIngredient {
     price: number;
 }
 
+export interface IIngredientGroup {
+    id: string;
+    ingredients: IIngredient[];
+    name: string;
+}
+
 export interface IProductDetails {
     id: string;
     description: string;
@@ -34,7 +40,7 @@ export interface IProductDetails {
     name: string;
     price: number;
     weight: string;
-    ingredientGroups: any[];
+    ingredientGroups: IIngredientGroup[];
     ingredients: IIngredient[];
 }
 
