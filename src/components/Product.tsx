@@ -1,6 +1,8 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IProduct } from '../API/vendorAPI';
+import { useAppDispatch, useAppSelector } from '../hooks/hooks';
+import { addProduct, IfinalProduct, removeProduct } from '../redux/productSlice';
 import MinMaxBtns from './UI/MinMaxBtns';
 
 interface productProps {
@@ -12,6 +14,23 @@ const Product:React.FC<productProps> = ({product, setTotalPrice}) => {
     const [numberOf, setNumberOf] = useState(0);
     const productRef = useRef<HTMLDivElement | any>();
     const navigate = useNavigate();
+    const [myId, setMyId] = useState(1);
+
+    const finalProduct: IfinalProduct = {
+        myId: myId,
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        quantity: 1,
+        image: product.image,
+        ingredients: [],
+    };
+    const dispatch = useAppDispatch();
+    const {products: finalProducts} = useAppSelector(state => state.product);
+
+    useEffect(() => {
+        finalProduct.myId = myId;
+    }, [myId]);
 
     const onClickMinHandler = () => {
         if(numberOf === 1) {
@@ -19,11 +38,14 @@ const Product:React.FC<productProps> = ({product, setTotalPrice}) => {
         };
         setNumberOf(prev => prev - 1);
         setTotalPrice(prev => prev -= product.price);
+        dispatch(removeProduct({id: product.id, myId}));
     };
 
     const onClickMaxHandler = () => {
+        setMyId(Date.now());
         setNumberOf(prev => prev + 1);
         setTotalPrice(prev => prev += product.price);
+        dispatch(addProduct(finalProduct));
     };
 
     return (
@@ -39,9 +61,11 @@ const Product:React.FC<productProps> = ({product, setTotalPrice}) => {
                 {numberOf === 0 
                     ? <button 
                         onClick={() => {
+                            setMyId(Date.now());
                             setNumberOf(1);
                             setTotalPrice(prev => prev += product.price);
-                            productRef.current.style.boxShadow = '0px 3px 12px rgba(0, 0, 0, 0.06), inset 0px -3px 0px #3F8AE0'
+                            productRef.current.style.boxShadow = '0px 3px 12px rgba(0, 0, 0, 0.06), inset 0px -3px 0px #3F8AE0';
+                            dispatch(addProduct(finalProduct));
                         }}
                         className='product__btn'
                     >{product.price} ₽</button>

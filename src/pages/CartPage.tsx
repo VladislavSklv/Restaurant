@@ -1,14 +1,17 @@
 import React, { useEffect } from 'react';
-import { useGetProductsMenuQuery } from '../API/vendorAPI';
 import ProductInCart from '../components/ProductInCart';
-import MinMaxBtns from '../components/UI/MinMaxBtns';
+import { useAppSelector } from '../hooks/hooks';
 
 const CartPage: React.FC = () => {
-    const {data: products} = useGetProductsMenuQuery({vendorId: 81225});
+    const {products} = useAppSelector(state => state.product);
 
     useEffect(() => {
-        Telegram.WebApp.MainButton.setParams({'is_visible': true, 'text': 'Заказать | 349 ₽'})
-    }, [])
+        let totalPrice = 0;
+        products.forEach(product => {
+            totalPrice += product.price * product.quantity;
+        });
+        Telegram.WebApp.MainButton.setParams({'is_visible': true, 'text': `Заказать | ${totalPrice} ₽`})
+    }, [products]);
 
     return (
         <div className='cart'>
@@ -17,12 +20,8 @@ const CartPage: React.FC = () => {
                 <div><img src="../../trash.svg" alt="cart"/></div>
             </div>
             <div className='cart__wrapper'>
-                {products !== undefined && products.map((productTab, index) => (
-                    <>
-                        {index === 0 && productTab.products.map((product, i) => (
-                            <ProductInCart i={i} product={product} />
-                        ))}
-                    </>
+                {products !== undefined && products.map(product => (
+                    <ProductInCart product={product} />
                 ))}
             </div>
         </div>
