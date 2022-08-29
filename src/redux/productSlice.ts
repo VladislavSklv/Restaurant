@@ -16,8 +16,9 @@ interface ingredientsState{
 }
 
 interface addIngredientPayload {
-    product: IProduct;
-    ingredient: IIngredient;
+    id: string;
+    myId: number;
+    ingredients: IIngredient[];
 }
 
 const initialState = { products: [] } as ingredientsState;
@@ -53,6 +54,17 @@ const productSlice = createSlice({
             state.products = state.products.filter(product => product.id !== action.payload.id);
             state.products = [...state.products, ...arrayById];
         },
+        filterProducts(state) {
+            for(let i = 1; i < state.products.length; ++i) {
+                if(JSON.stringify(state.products[i - 1]) == JSON.stringify(state.products[i])) {
+                    alert(JSON.stringify(state.products[i - 1]) + " == " + JSON.stringify(state.products[i]))
+                } else if(JSON.stringify(state.products[i - 1]) < JSON.stringify(state.products[i])) {
+                    alert(JSON.stringify(state.products[i - 1]) + " < " + JSON.stringify(state.products[i]))
+                } else {
+                    alert(JSON.stringify(state.products[i - 1]) + " > " + JSON.stringify(state.products[i]))
+                };
+            }
+        },
         incrementQuantity(state, action: PayloadAction<{id: string, myId: number }>) {
             state.products = state.products.map(product => {
                 if(product.id === action.payload.id && product.myId === action.payload.myId){
@@ -60,7 +72,7 @@ const productSlice = createSlice({
                 } else {
                     return product;
                 }
-            })
+            });
         },
         decrementQuantity(state, action: PayloadAction<{id: string, myId: number }>) {
             state.products = state.products.map(product => {
@@ -69,10 +81,23 @@ const productSlice = createSlice({
                 } else {
                     return product;
                 }
-            })
+            });
         },
+        addIngredientsToProductByMyId(state, action: PayloadAction<addIngredientPayload>) {
+            state.products = state.products.map(product => {
+                if(product.id === action.payload.id && product.myId === action.payload.myId){
+                    const newIngredients: IIngredient[] = [];
+                    action.payload.ingredients.forEach(ingredient => {
+                        newIngredients.push(ingredient);
+                    });
+                    return product = {...product, ingredients: newIngredients};
+                } else {
+                    return product;
+                }
+            });
+        }
     }
 });
 
-export const {addProduct, removeProduct, incrementQuantity, decrementQuantity} = productSlice.actions;
+export const {addProduct, removeProduct, incrementQuantity, decrementQuantity, filterProducts, addIngredientsToProductByMyId} = productSlice.actions;
 export default productSlice.reducer;

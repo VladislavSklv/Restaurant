@@ -16,21 +16,8 @@ const Product:React.FC<productProps> = ({product, setTotalPrice}) => {
     const navigate = useNavigate();
     const [myId, setMyId] = useState(1);
 
-    const finalProduct: IfinalProduct = {
-        myId: myId,
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        quantity: 1,
-        image: product.image,
-        ingredients: [],
-    };
     const dispatch = useAppDispatch();
-    const {products: finalProducts} = useAppSelector(state => state.product);
-
-    useEffect(() => {
-        finalProduct.myId = myId;
-    }, [myId]);
+    const {products} = useAppSelector(state => state.product);
 
     const onClickMinHandler = () => {
         if(numberOf === 1) {
@@ -42,16 +29,32 @@ const Product:React.FC<productProps> = ({product, setTotalPrice}) => {
     };
 
     const onClickMaxHandler = () => {
-        setMyId(Date.now());
+        const p = new Promise((resolve, reject) => {
+            dispatch(addProduct({
+                myId: myId,
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                quantity: 1,
+                image: product.image,
+                ingredients: [],
+            }));
+            resolve(true);
+            reject(false);
+        });
         setNumberOf(prev => prev + 1);
         setTotalPrice(prev => prev += product.price);
-        dispatch(addProduct(finalProduct));
+        p.then((data) => {
+            if(data) {
+                setMyId(Date.now());
+            }
+        })
     };
 
     return (
         <div ref={productRef} className='product'>
             <div 
-                onClick={() => navigate(`/details/${product.id}/${numberOf}`)}
+                onClick={() => navigate(`/details/${product.id}/${myId}`)}
                 className='product__img'
             ><img src={product.image || 'https://flyclipart.com/thumb2/icono-plato-160306.png'} alt={product.name} />
             </div>
@@ -61,11 +64,27 @@ const Product:React.FC<productProps> = ({product, setTotalPrice}) => {
                 {numberOf === 0 
                     ? <button 
                         onClick={() => {
-                            setMyId(Date.now());
+                            const p1 = new Promise((resolve, reject) => {
+                                dispatch(addProduct({
+                                    myId: myId,
+                                    id: product.id,
+                                    name: product.name,
+                                    price: product.price,
+                                    quantity: 1,
+                                    image: product.image,
+                                    ingredients: [],
+                                }));
+                                resolve(true);
+                                reject(false);
+                            });
                             setNumberOf(1);
                             setTotalPrice(prev => prev += product.price);
                             productRef.current.style.boxShadow = '0px 3px 12px rgba(0, 0, 0, 0.06), inset 0px -3px 0px #3F8AE0';
-                            dispatch(addProduct(finalProduct));
+                            p1.then((data) => {
+                                if(data) {
+                                    setMyId(Date.now());
+                                }
+                            })
                         }}
                         className='product__btn'
                     >{product.price} ₽</button>

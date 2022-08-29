@@ -19,7 +19,7 @@ function App() {
 		<BrowserRouter>
 			<Routes>
 				{products !== undefined && <Route path='/' element={<MainMenuPage totalPrice={totalPrice} setTotalPrice={setTotalPrice} productsTabs={products} />} />}
-				<Route path='/details/:id/:numberOf' element={<ProductDetailsPage vendorId={productProps.vendorId}/>}/>
+				<Route path='/details/:id/:myId' element={<ProductDetailsPage vendorId={productProps.vendorId}/>}/>
 				<Route path='/cart' element={<CartPage />}/>
 			</Routes>
 		</BrowserRouter>

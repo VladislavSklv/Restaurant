@@ -25,10 +25,6 @@ const MainMenuPage:React.FC<mainMenuPageProps> = ({productsTabs, totalPrice, set
 		productsTabsNames.push({name: productTab.name, id: productTab.id});
 	});
 
-    let array = [1, 2, 3, 4, 5];
-    let array2 = [1, 2, 3, 4, 5];
-    console.log(array == array2);
-
     useEffect(() => {
         if(totalPrice !== 0) {
             Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': `Заказать ${totalPrice} ₽`})

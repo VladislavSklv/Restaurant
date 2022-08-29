@@ -1,9 +1,14 @@
 import React, { useEffect } from 'react';
 import ProductInCart from '../components/ProductInCart';
-import { useAppSelector } from '../hooks/hooks';
+import { useAppDispatch, useAppSelector } from '../hooks/hooks';
 
 const CartPage: React.FC = () => {
     const {products} = useAppSelector(state => state.product);
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        console.log(products);
+    }, [products]);
 
     useEffect(() => {
         let totalPrice = 0;
@@ -21,7 +26,7 @@ const CartPage: React.FC = () => {
             </div>
             <div className='cart__wrapper'>
                 {products !== undefined && products.map(product => (
-                    <ProductInCart product={product} />
+                    <ProductInCart key={product.myId + product.id} product={product} />
                 ))}
             </div>
         </div>

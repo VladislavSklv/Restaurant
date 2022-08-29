@@ -1,25 +1,41 @@
 import React from 'react';
+import { IChosenIngredients } from '../ModalComposition';
 
 interface myInputRadioProps {
-    id: string;
     inputName: string;
     label: string;
     inputClassName: string;
     inputType: string;
-    onClickHandler?: () => void;
+    value: IChosenIngredients;
+    setOptionValue?: React.Dispatch<React.SetStateAction<string>>;
+    setOptionValues?: React.Dispatch<React.SetStateAction<string[]>>
+    optionValues?: string[];
 }
 
-const MyInputRadioOrCheckbox:React.FC<myInputRadioProps> = ({id, inputName, label, inputClassName, inputType, onClickHandler}) => {
+const MyInputRadioOrCheckbox:React.FC<myInputRadioProps> = ({inputName, label, inputClassName, inputType, value, setOptionValue, setOptionValues, optionValues}) => {
     return (
         <>
             <input 
                 type={inputType}
                 className={inputClassName}
                 name={inputName}
-                id={id}
-                onClick={onClickHandler}
+                id={value.id}
+                value={JSON.stringify(value)}
+                onClick={() => {
+                    setOptionValue && setOptionValue(JSON.stringify(value));
+                    if(setOptionValues && optionValues){
+                        setOptionValues(prev => {
+                            if(prev.includes(JSON.stringify(value))) {
+                                const array = prev.filter(prevValue => prevValue !== JSON.stringify(value));
+                                return array;
+                            } else { 
+                                return [...prev, JSON.stringify(value)];
+                            }
+                        });
+                    };
+                }}
             />
-            <label htmlFor={id}>{label}</label>   
+            <label htmlFor={value.id}>{label}</label>   
         </>
     );
 };

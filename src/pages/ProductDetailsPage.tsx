@@ -3,18 +3,29 @@ import { useParams } from 'react-router-dom';
 import { useGetProductDetailsQuery } from '../API/vendorAPI';
 import ModalComposition from '../components/ModalComposition';
 import MinMaxBtns from '../components/UI/MinMaxBtns';
+import { useAppSelector } from '../hooks/hooks';
+import { IfinalProduct } from '../redux/productSlice';
 
 interface productDetailsPageProps{
     vendorId: number;
 }
 
 const ProductDetailsPage: React.FC<productDetailsPageProps> = ({vendorId}) => {
-    const {id, numberOf} = useParams();
+    const {id, myId} = useParams();
     const {isLoading, isError, data: details} = useGetProductDetailsQuery({productId: id!, vendorId});
-    const [newNumberOf, setNewNumberOf] = useState(parseInt(numberOf!));
+    const [newNumberOf, setNewNumberOf] = useState(1);
     const [price, setPrice] = useState(0);
     const [isModalComp, setIsModalComp] = useState(false);
-    const [activeTab, setActiveTab] = useState('');
+
+    const {products} = useAppSelector(state => state.product);
+    let thisProduct: IfinalProduct;
+    products.forEach(product => {
+        if(myId !== undefined && product.id === id && product.myId === parseInt(myId)) thisProduct = product;
+    });
+
+    useEffect(() => {
+        if(thisProduct !== undefined) setNewNumberOf(thisProduct.quantity);
+    }, [products])
 
     useEffect(() => {
         if(details !== undefined){
@@ -23,7 +34,7 @@ const ProductDetailsPage: React.FC<productDetailsPageProps> = ({vendorId}) => {
     }, [details]);
 
     useEffect(() => {
-        if(details != undefined && numberOf != undefined && price > 0) {
+        if(details != undefined && price > 0) {
             Telegram.WebApp.MainButton.isVisible = true;
             Telegram.WebApp.MainButton.text = `Добавить к заказу | ${price} ₽`
         } else {
@@ -62,7 +73,6 @@ const ProductDetailsPage: React.FC<productDetailsPageProps> = ({vendorId}) => {
                             className='product-id__btn'
                             onClick={() => {
                                 setIsModalComp(true);
-                                setActiveTab(ingredient.id);
                             }}
                         >Выбрать</button>
                     </div>
@@ -72,11 +82,10 @@ const ProductDetailsPage: React.FC<productDetailsPageProps> = ({vendorId}) => {
                         className='product-id__btn'
                         onClick={() => {
                             setIsModalComp(true);
-                            setActiveTab('optional');
                         }}
                     >Добавить</button>
                 </div>}
-                {details.ingredients.length > 0 && <ModalComposition activeTab={activeTab} setActiveTab={setActiveTab} isModalComp={isModalComp} setIsModalComp={setIsModalComp} ingredientsMainGroup={details.ingredientGroups} ingredientsOptional={details.ingredients}/>}
+                {details.ingredients.length > 0 && myId !== undefined && id !== undefined && <ModalComposition myId={parseInt(myId)} id={id} isModalComp={isModalComp} setIsModalComp={setIsModalComp} ingredientsMainGroup={details.ingredientGroups} ingredientsOptional={details.ingredients}/>}
             </div>}
         </>
     );
