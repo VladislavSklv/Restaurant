@@ -111,7 +111,7 @@ code {
 	bottom: 7px;
 	left: 3px;
 	width: calc(100% - 6px);
-	height: 3px;
+	height: 2px;
 }
 
 .slick-slider > .slick-dots > li{
@@ -221,7 +221,7 @@ code {
 }
 
 .modal__hrefs > .active::after{
-	content: url(../public/tick.svg);
+	content: url(../public/images/tick.svg);
 	position: absolute;
 	display: flex;
 	justify-content: center;
@@ -286,7 +286,7 @@ code {
 }
 
 .product__img{
-	height: calc(50vw - 10px);
+	/* height: calc(50vw - 10px); */
 	width: 100%;
 }
 
@@ -478,8 +478,9 @@ code {
 }
 
 .modal-comp > .navbar {
-	position: relative;
-	margin-bottom: 10px;
+	position: absolute;
+	top: 7px;
+	left: 0;
 }
 
 .modal-comp > .navbar > .navbar__wrapper > .navbar__href {
@@ -542,7 +543,7 @@ code {
 
 .custom-radio:checked+label::before, .custom-checkbox:checked+label::before {
 	color: #fff;
-	content: url(../public/tick.svg);
+	content: url(../public/images/tick.svg);
     background-color: #3F8AE0;
 	border-color: #3F8AE0;
 }
@@ -573,6 +574,10 @@ code {
 	align-items: center;
 	color: rgba(0, 0, 0, 0.87);
 	padding: 0 12px 0 28px;
+}
+
+.options__item > span {
+	white-space: nowrap;
 }
 
 .cart__title-with-icon{
@@ -650,4 +655,16 @@ code {
 .cart-item > .cart-item__content > .product__numberof {
 	position: static;
 	width: 92px;
+}
+
+.place-number-img{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: rgba(208, 210, 255, 0.2);
+	height: 64px;
+}
+
+.cart-item > .place-number-img > img {
+	width: 60%;
 }

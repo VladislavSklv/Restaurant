@@ -9,6 +9,13 @@ interface prodcutInCartProps {
 
 const ProductInCart:React.FC<prodcutInCartProps> = ({product}) => {
     const [numberOf, setNumberOf] = useState(product.quantity);
+    const [ingredientsPrice, setIngredientsPrice] = useState(0);
+
+    useEffect(() => {
+        product.ingredients.forEach(ingredient => {
+            setIngredientsPrice(prev => prev += ingredient.price);
+        });
+    },  []);
 
     const dispatch = useAppDispatch();
 
@@ -30,13 +37,13 @@ const ProductInCart:React.FC<prodcutInCartProps> = ({product}) => {
         <div className='cart-item'>
             <div className='cart-item__img'><img src={product.image || 'https://flyclipart.com/thumb2/icono-plato-160306.png'} alt={product.name} /></div>
             <div className='cart-item__content'>
-                <h2 className='cart-item__title'>{product.name} <span className='cart-item__price'>{product.price * numberOf} ₽</span></h2>
+                <h2 className='cart-item__title'>{product.name} <span className='cart-item__price'>{product.price * numberOf + ingredientsPrice} ₽</span></h2>
                 {product.ingredients.length > 0 && 
                     <p className='cart-item__ingredients'>
-                        {product.ingredients.map((ingredient, i) => (
-                            <>
-                                {i === 0 ? ingredient : `• ${ingredient.name} `}
-                            </>
+                        {product.ingredients.length > 0 && product.ingredients.map((ingredient, i) => (
+                            <span key={ingredient.id + i + Date.now()}>
+                                {i === 0 ? `${ingredient.name} `: `• ${ingredient.name} `}
+                            </span>
                         ))}
                     </p>
                 }

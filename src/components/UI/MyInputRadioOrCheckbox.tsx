@@ -10,9 +10,10 @@ interface myInputRadioProps {
     setOptionValue?: React.Dispatch<React.SetStateAction<string>>;
     setOptionValues?: React.Dispatch<React.SetStateAction<string[]>>
     optionValues?: string[];
+    handleOnClick?: (index: number) => void;
 }
 
-const MyInputRadioOrCheckbox:React.FC<myInputRadioProps> = ({inputName, label, inputClassName, inputType, value, setOptionValue, setOptionValues, optionValues}) => {
+const MyInputRadioOrCheckbox:React.FC<myInputRadioProps> = ({inputName, label, inputClassName, inputType, value, setOptionValue, setOptionValues, optionValues, handleOnClick}) => {
     return (
         <>
             <input 
@@ -33,6 +34,9 @@ const MyInputRadioOrCheckbox:React.FC<myInputRadioProps> = ({inputName, label, i
                             }
                         });
                     };
+                    if(inputType === 'radio' && handleOnClick && value.myId !== undefined){
+                        handleOnClick(value.myId + 1)
+                    }
                 }}
             />
             <label htmlFor={value.id}>{label}</label>   

@@ -4,11 +4,10 @@ import Product from './Product';
 
 interface productListProps {
     productsTabs: IProductsTab[];
-    setTotalPrice: React.Dispatch<React.SetStateAction<number>>;
     setActiveTab: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const ProductsList:React.FC<productListProps> = ({productsTabs, setTotalPrice, setActiveTab}) => {
+const ProductsList:React.FC<productListProps> = ({productsTabs, setActiveTab}) => {
     return (
         <>
             {productsTabs !== undefined && productsTabs.map(productsTab => (
@@ -23,7 +22,7 @@ const ProductsList:React.FC<productListProps> = ({productsTabs, setTotalPrice, s
                     <div className='title'>{productsTab.name}</div>
                     <div className='menu__wrapper'>
                         {productsTab.products.map(product => (
-                            <Product key={product.id} setTotalPrice={setTotalPrice} product={product} />
+                            <Product key={product.id} product={product} />
                         ))}
                     </div>
                 </div>

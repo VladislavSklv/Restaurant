@@ -95,9 +95,12 @@ const productSlice = createSlice({
                     return product;
                 }
             });
+        },
+        clearProducts(state){
+            state.products = [];
         }
     }
 });
 
-export const {addProduct, removeProduct, incrementQuantity, decrementQuantity, filterProducts, addIngredientsToProductByMyId} = productSlice.actions;
+export const {addProduct, removeProduct, incrementQuantity, decrementQuantity, filterProducts, addIngredientsToProductByMyId, clearProducts} = productSlice.actions;
 export default productSlice.reducer;
