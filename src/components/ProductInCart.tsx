@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../hooks/hooks';
+import { useAppDispatch } from '../hooks/hooks';
 import { decrementQuantity, IfinalProduct, incrementQuantity, removeProduct } from '../redux/productSlice';
 import MinMaxBtns from './UI/MinMaxBtns';
 
@@ -16,6 +16,10 @@ const ProductInCart:React.FC<prodcutInCartProps> = ({product}) => {
             setIngredientsPrice(prev => prev += ingredient.price);
         });
     },  []);
+
+    useEffect(() => {
+        setNumberOf(product.quantity);
+    }, [product])
 
     const dispatch = useAppDispatch();
 

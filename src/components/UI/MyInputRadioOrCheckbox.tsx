@@ -1,5 +1,5 @@
 import React from 'react';
-import { IChosenIngredients } from '../ModalComposition';
+import { IChosenIngredients } from '../ModalOptions';
 
 interface myInputRadioProps {
     inputName: string;

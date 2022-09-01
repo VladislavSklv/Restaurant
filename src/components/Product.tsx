@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IProduct } from '../API/vendorAPI';
 import { useAppDispatch, useAppSelector } from '../hooks/hooks';
-import { addProduct, IfinalProduct, removeProduct } from '../redux/productSlice';
+import { addProduct, decrementQuantity, removeProduct } from '../redux/productSlice';
 import MinMaxBtns from './UI/MinMaxBtns';
 
 interface productProps {
@@ -18,12 +18,33 @@ const Product:React.FC<productProps> = ({product}) => {
     const dispatch = useAppDispatch();
     const {products} = useAppSelector(state => state.product);
 
+    useEffect(() => {
+        if(numberOf === 0) productRef.current.style.boxShadow = '0px 3px 12px rgba(0, 0, 0, 0.06)';
+        else productRef.current.style.boxShadow = '0px 3px 12px rgba(0, 0, 0, 0.06), inset 0px -3px 0px #3F8AE0';
+    }, [numberOf])
+
+    useEffect(() => {
+        if(products !== undefined && products.length > 0) {
+            let quantity = 0;
+            products.forEach(finalProduct => {
+                if(finalProduct.id === product.id) quantity += finalProduct.quantity;
+            });
+            setNumberOf(quantity);
+            setMyId(prev => prev += quantity + 1);
+        }
+    }, [products]);
+
     const onClickMinHandler = () => {
-        if(numberOf === 1) {
-            productRef.current.style.boxShadow = '0px 3px 12px rgba(0, 0, 0, 0.06)';
-        };
         setNumberOf(prev => prev - 1);
-        dispatch(removeProduct({id: product.id, myId}));
+        let checker = true;
+        for (let j = 0; j < products.length; j++) {
+            if(products[j].id === product.id && products[j].quantity > 1) {
+                dispatch(decrementQuantity({id: products[j].id, myId: products[j].myId}));
+                checker = false;
+                break;
+            }
+        };
+        if(checker) dispatch(removeProduct({id: product.id, myId}));
     };
 
     const onClickMaxHandler = () => {
@@ -84,7 +105,6 @@ const Product:React.FC<productProps> = ({product}) => {
                                 if(product.hasIngredients === true) navigate(`/details/${product.id}/${myId}`);
                             }) 
                             setNumberOf(1);
-                            productRef.current.style.boxShadow = '0px 3px 12px rgba(0, 0, 0, 0.06), inset 0px -3px 0px #3F8AE0';
                         }}
                         className='product__btn'
                     >{product.price} ₽</button>

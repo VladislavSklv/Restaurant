@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { IProduct, useGetProductsMenuQuery } from './API/vendorAPI';
+import {  useGetProductsMenuQuery } from './API/vendorAPI';
+import ErrorBlock from './components/ErrorBlock';
+import Loader from './components/Loader';
 import { useAppSelector } from './hooks/hooks';
 import CartPage from './pages/CartPage';
 import MainMenuPage from './pages/MainMenuPage';
@@ -17,7 +19,7 @@ function App() {
 	const {data: products, isLoading, isError} = useGetProductsMenuQuery(productProps);
 	const [totalPrice, setTotalPrice] = useState(0);
 
-	const {products: finalProducts} = useAppSelector(state => state.product)
+	const {products: finalProducts} = useAppSelector(state => state.product);
 
 	useEffect(() => {
 		if(finalProducts !== undefined && finalProducts.length > 0) {
@@ -40,6 +42,8 @@ function App() {
 		<BrowserRouter>
 			<Routes>
 				{products !== undefined && <Route path='/' element={<MainMenuPage totalPrice={totalPrice} setTotalPrice={setTotalPrice} productsTabs={products} />} />}
+				{isLoading && <Route path='/' element={<Loader/>} />}
+				{isError && <Route path='/' element={<ErrorBlock/>} />}
 				<Route path='/details/:id/:myId' element={<ProductDetailsPage vendorId={productProps.vendorId}/>}/>
 				<Route path='/cart' element={<CartPage />}/>
 			</Routes>

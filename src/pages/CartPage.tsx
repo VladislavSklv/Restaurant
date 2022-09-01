@@ -13,10 +13,6 @@ const CartPage: React.FC = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log(products);
-    }, [products]);
-
-    useEffect(() => {
         let totalPrice = 0;
         products.forEach(product => {
             totalPrice += product.price * product.quantity;

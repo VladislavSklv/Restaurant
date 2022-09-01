@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { IIngredient } from '../API/vendorAPI';
-import { IfinalProduct } from '../redux/productSlice';
-import { IChosenIngredients } from './ModalComposition';
+import { IChosenIngredients } from './ModalOptions';
 import MyInputRadioOrCheckbox from './UI/MyInputRadioOrCheckbox';
 
 interface optionTabProps {
@@ -34,7 +33,6 @@ const OptionTab:React.FC<optionTabProps> = ({ingredients, inputName, optionId, i
     }, [optionValue]);
 
     useEffect(() => {
-        console.log(optionValues)
         if(optionValues !== undefined && optionValues.length > 0 && hasMainIngredients){
             setChosenIngredients(prev => {
                 if(prev !== undefined && prev.length > 0) {

@@ -1,15 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Slider, { InnerSlider } from 'react-slick';
+import Slider from 'react-slick';
 import { IIngredient, IIngredientGroup } from '../API/vendorAPI';
 import { productsTabs } from '../App';
 import OptionTab from './OptionTab';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useAppDispatch } from '../hooks/hooks';
-import { addIngredientsToProductByMyId } from '../redux/productSlice';
+import { addIngredientsToProductByMyId, filterProducts } from '../redux/productSlice';
 
-interface modalCompositionProps {
+interface modalOptionsProps {
     ingredientsMainGroup: IIngredientGroup[];
     ingredientsOptional: IIngredient[];
     isModalComp: boolean;
@@ -17,7 +17,6 @@ interface modalCompositionProps {
     id: string;
     myId: number;
     initialSlide: number;
-    setInitialSlide: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export interface IChosenIngredients {
@@ -27,7 +26,7 @@ export interface IChosenIngredients {
     myId?: number;
 }
 
-const ModalComposition:React.FC<modalCompositionProps> = ({ingredientsMainGroup, ingredientsOptional, isModalComp, setIsModalComp, id, myId, initialSlide, setInitialSlide}) => {
+const ModalOptions:React.FC<modalOptionsProps> = ({ingredientsMainGroup, ingredientsOptional, isModalComp, setIsModalComp, id, myId, initialSlide}) => {
     const [chosenIngredients, setChosenIngredients] = useState<IChosenIngredients[]>();
     const [finalChosenIngredients, setFinalChosenIngredients] = useState<any>();
     const [hasMainIngredients, setHasMainIngredients] = useState(ingredientsMainGroup.length > 0);
@@ -43,7 +42,6 @@ const ModalComposition:React.FC<modalCompositionProps> = ({ingredientsMainGroup,
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        console.log(chosenIngredients);
         const fci = chosenIngredients?.map(chosenIngredient => {
             const {myId, ...rest} = chosenIngredient;
             return rest;
@@ -54,7 +52,14 @@ const ModalComposition:React.FC<modalCompositionProps> = ({ingredientsMainGroup,
     const setBtnTrue = () => {
         Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': 'Готово', 'is_active': true});
         Telegram.WebApp.MainButton.onClick(() => {
-            if(finalChosenIngredients !== undefined) dispatch(addIngredientsToProductByMyId({ingredients: finalChosenIngredients, id, myId}));
+            if(finalChosenIngredients !== undefined) {
+                const p = new Promise((resolve, reject) => {
+                    dispatch(addIngredientsToProductByMyId({ingredients: finalChosenIngredients, id, myId}));
+                    resolve(true);
+                }).then(() =>{
+                    dispatch(filterProducts());
+                })
+            }
             navigate('/cart');
         });
     };
@@ -73,14 +78,12 @@ const ModalComposition:React.FC<modalCompositionProps> = ({ingredientsMainGroup,
         if(isModalComp){
             if(ingredientsMainGroup.length > 0 && finalChosenIngredients !== undefined && chosenIngredients !== undefined){
                 const arrayWithoutOptional = chosenIngredients.filter((ingredient: any) => ingredient.myId !== 99999999);
-                console.log(ingredientsMainGroup, arrayWithoutOptional);
                 if(ingredientsMainGroup.length <= arrayWithoutOptional.length) setBtnTrue(); 
                 else setBtnFalse();
             } else if(finalChosenIngredients !== undefined && chosenIngredients !== undefined) setBtnTrue();
         } else setBtnFalse();
     }, [finalChosenIngredients]);
 
-    /* !!! InitialSlide */
     const sliderSettings = {
         dots: true,
         infinite: false,
@@ -121,17 +124,9 @@ const ModalComposition:React.FC<modalCompositionProps> = ({ingredientsMainGroup,
                     ))}
                     <OptionTab hasMainIngredients={hasMainIngredients} index={99999999} setChosenIngredients={setChosenIngredients} isRadio={false} ingredients={ingredientsOptional} inputName='optional' optionId='optional' />
                 </Slider>
-                <button
-                    onClick={(e) => {
-                        e.preventDefault();
-                        console.log(finalChosenIngredients);
-                        if(finalChosenIngredients !== undefined) dispatch(addIngredientsToProductByMyId({ingredients: finalChosenIngredients, id, myId}));
-                        navigate('/cart');
-                    }}  
-                >Submit</button>
             </form>
         </div>
     );
 };
 
-export default ModalComposition;
+export default ModalOptions;

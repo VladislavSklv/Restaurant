@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IIngredient, IProduct } from "../API/vendorAPI";
+import { IIngredient } from "../API/vendorAPI";
 
 export interface IfinalProduct{
     myId: number,
@@ -29,24 +29,6 @@ const productSlice = createSlice({
     reducers: {
         addProduct(state, action: PayloadAction<IfinalProduct>) {
             state.products.push(action.payload);
-            /* if (state.products.length > 0) {
-                state.products = state.products.map(product => {
-                    let checker = 0;
-                    let checker2 = 1;
-                    const productValues = Object.values(product);
-                    const payloadValues = Object.values(action.payload);
-                    productValues.forEach(productItem => {
-                        payloadValues.forEach(payloadItem => {
-                            if(payloadItem === productItem) checker = 1;
-                            if(checker === 0) checker2 = 0;
-                        });
-                    });
-                    if(checker2 === 1) {console.log('add quantity'); return product = {...product, quantity: product.quantity + 1}} 
-                    else {console.log('add item'); return action.payload};
-                });
-            } else {
-                state.products.push(action.payload);
-            } */
         },
         removeProduct(state, action: PayloadAction<{id: string, myId: number }>) {
             const arrayById = state.products.filter(product => product.id === action.payload.id);
@@ -55,15 +37,37 @@ const productSlice = createSlice({
             state.products = [...state.products, ...arrayById];
         },
         filterProducts(state) {
-            for(let i = 1; i < state.products.length; ++i) {
-                if(JSON.stringify(state.products[i - 1]) == JSON.stringify(state.products[i])) {
-                    alert(JSON.stringify(state.products[i - 1]) + " == " + JSON.stringify(state.products[i]))
-                } else if(JSON.stringify(state.products[i - 1]) < JSON.stringify(state.products[i])) {
-                    alert(JSON.stringify(state.products[i - 1]) + " < " + JSON.stringify(state.products[i]))
-                } else {
-                    alert(JSON.stringify(state.products[i - 1]) + " > " + JSON.stringify(state.products[i]))
-                };
-            }
+            const filteredProducts: IfinalProduct[] = [];
+            for (let j = 0; j < state.products.length; j++) {
+                let mainProduct = {...state.products[j], quantity: 0};
+                state.products.forEach(product => {
+                    if(mainProduct.id === product.id && mainProduct.ingredients.length === 0 && product.ingredients.length === 0){
+                        mainProduct.quantity += 1;
+                    } else if (mainProduct.id === product.id && mainProduct.ingredients.length === product.ingredients.length && mainProduct.ingredients.length !== 0){
+                        let checker = false;
+                        for(let p = 0; p < mainProduct.ingredients.length; p++) {
+                            for (let i = 0; i < product.ingredients.length; i++){
+                                if(mainProduct.ingredients[p].id === product.ingredients[i].id) {
+                                    checker = true;
+                                    break;
+                                }
+                            }
+                            if(!checker) {
+                                break;
+                            }
+                        };
+                        if(checker){
+                            mainProduct.quantity += 1;
+                        }
+                    };
+                });
+                let checker = true;
+                filteredProducts.forEach(filteredProduct => {
+                    if(mainProduct.quantity <= 0 || (filteredProduct.id === mainProduct.id && JSON.stringify(filteredProduct.ingredients) === JSON.stringify(mainProduct.ingredients))) checker = false;
+                });
+                if(checker) filteredProducts.push(mainProduct);
+		    };
+            state.products = [...filteredProducts];
         },
         incrementQuantity(state, action: PayloadAction<{id: string, myId: number }>) {
             state.products = state.products.map(product => {

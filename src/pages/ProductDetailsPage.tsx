@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGetProductDetailsQuery } from '../API/vendorAPI';
-import ModalComposition from '../components/ModalComposition';
+import ErrorBlock from '../components/ErrorBlock';
+import Loader from '../components/Loader';
+import ModalOptions from '../components/ModalOptions';
 import MinMaxBtns from '../components/UI/MinMaxBtns';
 import { useAppSelector } from '../hooks/hooks';
 import { IfinalProduct } from '../redux/productSlice';
@@ -28,7 +30,7 @@ const ProductDetailsPage: React.FC<productDetailsPageProps> = ({vendorId}) => {
 
     useEffect(() => {
         if(thisProduct !== undefined) setNewNumberOf(thisProduct.quantity);
-    }, [products])
+    }, [products]);
 
     useEffect(() => {
         if(details !== undefined){
@@ -64,9 +66,11 @@ const ProductDetailsPage: React.FC<productDetailsPageProps> = ({vendorId}) => {
 
     return (
         <>
+            {isLoading && <Loader/>}
+            {isError && <ErrorBlock/>}
             {details !== undefined && 
             <div className='product-id'>
-                <div className='product-id__img'><img src={details.image} alt={details.name} /></div>
+                <div className='product-id__img'><img src={details.image || 'https://flyclipart.com/thumb2/icono-plato-160306.png'} alt={details.name} /></div>
                 <h1 className='product-id__title'>{details.name}</h1>
                 {details.weight 
                     ? <p className='product-id__descr'>{details.weight} г &#8226; {details.description}</p>
@@ -95,7 +99,7 @@ const ProductDetailsPage: React.FC<productDetailsPageProps> = ({vendorId}) => {
                         }}
                     >Добавить</button>
                 </div>}
-                {details.ingredients.length > 0 && myId !== undefined && id !== undefined && <ModalComposition initialSlide={initialSlide} setInitialSlide={setInitialSlide} myId={parseInt(myId)} id={id} isModalComp={isModalComp} setIsModalComp={setIsModalComp} ingredientsMainGroup={details.ingredientGroups} ingredientsOptional={details.ingredients}/>}
+                {details.ingredients.length > 0 && myId !== undefined && id !== undefined && <ModalOptions initialSlide={initialSlide} myId={parseInt(myId)} id={id} isModalComp={isModalComp} setIsModalComp={setIsModalComp} ingredientsMainGroup={details.ingredientGroups} ingredientsOptional={details.ingredients}/>}
             </div>}
         </>
     );
