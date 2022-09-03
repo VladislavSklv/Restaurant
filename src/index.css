@@ -186,6 +186,30 @@ code {
 	z-index: 4;
 }
 
+.thanking{
+	position: fixed;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 80%;
+	height: 30vh;
+	background: #fff;
+	border-radius: 10px;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	transition: all 400ms;
+	opacity: 0;
+	z-index: 4;
+	padding: 10px;
+	font-size: 28px;
+	font-weight: 800px;
+}
+
+.thanking_active{
+	opacity: 1;
+}
+
 .modal__title{
 	display: flex;
 	font-weight: 500;
@@ -262,6 +286,10 @@ code {
 	pointer-events: none;
 	transition: all 400ms;
 	z-index: 3;
+}
+
+.opacity-block_active{
+	opacity: 0.6;
 }
 
 .menu__wrapper{

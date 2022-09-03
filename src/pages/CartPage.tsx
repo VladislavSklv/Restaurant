@@ -13,6 +13,7 @@ interface cartPageProps{
 const CartPage: React.FC<cartPageProps> = ({vendorId}) => {
     const {products} = useAppSelector(state => state.product);
     const [placeNumber, setPlaceNumber] = useState(1);
+    const [thanking, setThanking] = useState(false);
     const dispatch = useAppDispatch();
 
     const navigate = useNavigate();
@@ -23,6 +24,27 @@ const CartPage: React.FC<cartPageProps> = ({vendorId}) => {
         vendor_id: vendorId,
         products: [],
     };
+
+    const setBtnOrder = () => {
+        Telegram.WebApp.onEvent('mainButtonClicked', () => {
+            fetch(`https://etoolz.ru/api/v1/vendor/${vendorId}/orde`,{
+                body: JSON.stringify(order),
+                method: 'POST'
+            }).then(() => {
+                Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': false, 'text_color': '#ffffff', 'text': 'Заказ выполнен!', 'is_active': false}).disable();
+            }).then(() => {
+                setThanking(true);
+            }).then(() =>{
+                setTimeout(() => {
+                    Telegram.WebApp.close();
+                }, 1500)
+            });
+        });
+    };
+
+    useEffect(() => {
+        setBtnOrder();
+    }, [placeNumber]);
 
     useEffect(() => {
         let totalPrice = 0;
@@ -52,18 +74,7 @@ const CartPage: React.FC<cartPageProps> = ({vendorId}) => {
         setPlaceNumber(prev => prev + 1);
     };
 
-    Telegram.WebApp.MainButton.onClick(() => {
-        fetch(`https://testwebprojects.ru`,{
-            body: JSON.stringify(order),
-            method: 'POST'
-        }).then(() => {
-            Telegram.WebApp.MainButton.disable().text = 'Заказ выполнен!';
-        }).then(() => {
-            dispatch(clearProducts());
-        }).then(() =>{
-            navigate('/');
-        });
-    });
+    if(placeNumber > 0) setBtnOrder();
 
     return (
         <div className='cart'>
@@ -87,6 +98,8 @@ const CartPage: React.FC<cartPageProps> = ({vendorId}) => {
                         <MinMaxBtns onClickMin={onClickMinHandler} onClickMax={onClickMaxHandler} numberOf={placeNumber} noText={true} />
                     </div>
                 </div>
+                <div className={thanking ? 'opacity-block opacity-block_active' : 'opacity-block'}></div>
+                <div className={thanking ? 'thanking thanking_active' : 'thanking'}>Спасибо за заказ!</div>
             </div>
         </div>
     );

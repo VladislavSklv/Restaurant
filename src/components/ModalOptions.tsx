@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Slider from 'react-slick';
 import { IIngredient, IIngredientGroup } from '../API/vendorAPI';
 import { productsTabs } from '../App';
@@ -45,6 +45,7 @@ const ModalOptions:React.FC<modalOptionsProps> = ({ingredientsMainGroup, ingredi
     });
 
     useEffect(() => {
+        console.log(chosenIngredients)
         const fci = chosenIngredients?.map(chosenIngredient => {
             const {myId, ...rest} = chosenIngredient;
             return rest;
@@ -63,27 +64,29 @@ const ModalOptions:React.FC<modalOptionsProps> = ({ingredientsMainGroup, ingredi
 
     const setBtnTrue = () => {
         Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': 'Готово', 'is_active': true}).enable();
+        console.log('setBtnTrue');
     };
 
     const setBtnFalse = () => {
         Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': 'Выберите состав', 'is_active': false}).disable();
+        console.log('setBtnFalse');
     };
 
-    if(hasMainIngredients && isModalComp) setBtnFalse();
-    else if(isModalComp) setBtnTrue();
+    if(hasMainIngredients && isModalComp && finalChosenIngredients === undefined && chosenIngredients === undefined) setBtnFalse();
+    else if(isModalComp && finalChosenIngredients === undefined && chosenIngredients === undefined) setBtnTrue();
 
     useEffect(() => {
         if(isModalComp){
             if(ingredientsMainGroup.length > 0 && finalChosenIngredients !== undefined && chosenIngredients !== undefined){
                 const arrayWithoutOptional = chosenIngredients.filter((ingredient: any) => ingredient.myId !== 99999999);
-                if(ingredientsMainGroup.length === arrayWithoutOptional.length) {
+                if(ingredientsMainGroup.length <= arrayWithoutOptional.length) {
                     setBtnTrue();
                 } else setBtnFalse();
             } else if(finalChosenIngredients !== undefined && chosenIngredients !== undefined) {
                 setBtnTrue();
             };
         };
-    }, [finalChosenIngredients]);
+    }, [finalChosenIngredients, chosenIngredients]);
 
     const sliderSettings = {
         dots: true,

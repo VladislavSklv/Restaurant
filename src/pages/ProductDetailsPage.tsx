@@ -6,7 +6,7 @@ import Loader from '../components/Loader';
 import ModalOptions from '../components/ModalOptions';
 import MinMaxBtns from '../components/UI/MinMaxBtns';
 import { useAppDispatch, useAppSelector } from '../hooks/hooks';
-import { addIngredientsToProductByMyId, decrementQuantity, filterProducts, IfinalProduct, incrementQuantity, removeProduct } from '../redux/productSlice';
+import { addIngredientsToProductByMyId, addProduct, decrementQuantity, filterProducts, incrementQuantity, removeProduct } from '../redux/productSlice';
 
 interface productDetailsPageProps{
     vendorId: number;
@@ -18,9 +18,10 @@ const ProductDetailsPage: React.FC<productDetailsPageProps> = ({vendorId}) => {
     const [numberOf, setNumberOf] = useState(1);
     const [isModalComp, setIsModalComp] = useState(false);
     const [isAnim, setIsAnim] = useState(false);
-    const [price, setPrice] = useState(details !== undefined ? details.price : 0);
     const [finalChosenIngredients, setFinalChosenIngredients] = useState<IIngredient[]>([]);
+    const [isReady, setIsReady] = useState(true);
     const sliderRef = useRef<any>(null);
+    const [price, setPrice] = useState<number>(details ? details.price * numberOf : 0);
 
     const {products} = useAppSelector(state => state.product);
     const dispatch = useAppDispatch();
@@ -28,13 +29,33 @@ const ProductDetailsPage: React.FC<productDetailsPageProps> = ({vendorId}) => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        let checker = false;
+        products.forEach(product => {
+            if(id !== undefined && product.id === id) checker = true;
+        });
+        if(!checker) {
+            setNumberOf(0);
+            setIsReady(false);
+        }
+    }, [products]);
+
+    useEffect(() => {
+        if(details !== undefined){
+            let thisPrice = details.price;
+            if(finalChosenIngredients !== undefined && finalChosenIngredients.length > 0){
+                finalChosenIngredients.forEach(ingredient => {
+                    thisPrice += ingredient.price;
+                })
+            }
+            thisPrice *= numberOf;
+            setPrice(thisPrice);
+        }
+    }, [finalChosenIngredients, numberOf]);
+
+    useEffect(() => {
         if(details?.hasIngredients && details.ingredientGroups.length > 0){
             setIsModalComp(true);
         };
-
-        if(details !== undefined && details.price !== undefined){
-            setPrice(details.price);
-        }
 
         if(details?.hasIngredients && details.ingredientGroups.length === 0){
             const p = new Promise((resolve, reject) => {
@@ -50,36 +71,57 @@ const ProductDetailsPage: React.FC<productDetailsPageProps> = ({vendorId}) => {
             Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': `Добавить к заказу | ${price} ₽`, 'is_active': true})
             .enable();
         };
+        if(details !== undefined && isModalComp === false && numberOf === 0){
+            Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': `Вернуться в меню`, 'is_active': true})
+            .enable();
+        }
     }, [price, isModalComp, numberOf]);
 
-    if(isModalComp === false) {
+    if(details !== undefined && isModalComp === false && numberOf > 0) {
+        Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': `Добавить к заказу | ${price} ₽`, 'is_active': true})
+        .enable();
+    };
+
+    if(details !== undefined && isModalComp === false && numberOf === 0){
+        Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': `Вернуться в меню`, 'is_active': true})
+        .enable();
+    };
+
+    if(isModalComp === false && details !== undefined && id !== undefined && myId !== undefined) {
         Telegram.WebApp.MainButton.onClick(() => {
             dispatch(filterProducts());
             navigate('/');
         });
     };
 
-    if (isModalComp === true && id !== undefined && myId !== undefined) {
+    if(isModalComp === true && id !== undefined && myId !== undefined) {
         Telegram.WebApp.MainButton.onClick(() => {
             setIsModalComp(false);
             dispatch(addIngredientsToProductByMyId({ingredients: finalChosenIngredients!, id, myId: parseInt(myId)}));
             navigate('');
         });
-    }
+    };
 
     const onClickMinHandler = () => {
         if(numberOf > 1 && details !== undefined) {
             setNumberOf(prev => prev - 1);
-            setPrice(prev => prev -= details.price);
             if(id !== undefined && myId !== undefined) dispatch(decrementQuantity({id, myId: parseInt(myId)}));
+        };
+        if(numberOf === 1 && isReady === false && id !== undefined && myId !== undefined){
+            setNumberOf(0);
+            setPrice(0);
+            dispatch(removeProduct({id, myId: parseInt(myId)}));
         }
     };
 
     const onClickMaxHandler = () => {
         if(numberOf > 0 && details !== undefined){
             setNumberOf(prev => prev + 1);
-            setPrice(prev => prev += details.price);
             if(id !== undefined && myId !== undefined) dispatch(incrementQuantity({id, myId: parseInt(myId)}));
+        };
+        if(numberOf === 0 && details !== undefined && isReady === false && id !== undefined && myId !== undefined){
+            setNumberOf(prev => prev + 1);
+            dispatch(addProduct({id: id, myId: parseInt(myId), image: details.image, name: details.name, price: details.price, quantity: 1, ingredients: finalChosenIngredients}));
         }
     };
 

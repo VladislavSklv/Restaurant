@@ -3,11 +3,11 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {  useGetProductsMenuQuery } from './API/vendorAPI';
 import ErrorBlock from './components/ErrorBlock';
 import Loader from './components/Loader';
-import { useAppDispatch, useAppSelector } from './hooks/hooks';
+import { useAppSelector } from './hooks/hooks';
 import CartPage from './pages/CartPage';
 import MainMenuPage from './pages/MainMenuPage';
 import ProductDetailsPage from './pages/ProductDetailsPage';
-import { filterProducts, IfinalProduct } from './redux/productSlice';
+import { IfinalProduct } from './redux/productSlice';
 
 export interface productsTabs {
 	name: string;
