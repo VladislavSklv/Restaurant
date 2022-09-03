@@ -20,7 +20,7 @@ const MyInputRadioOrCheckbox:React.FC<myInputRadioProps> = ({inputName, label, i
                 type={inputType}
                 className={inputClassName}
                 name={inputName}
-                id={value.id}
+                id={value.id.toString()}
                 value={JSON.stringify(value)}
                 onClick={() => {
                     setOptionValue && setOptionValue(JSON.stringify(value));
@@ -39,7 +39,7 @@ const MyInputRadioOrCheckbox:React.FC<myInputRadioProps> = ({inputName, label, i
                     }
                 }}
             />
-            <label htmlFor={value.id}>{label}</label>   
+            <label htmlFor={value.id.toString()}>{label}</label>   
         </>
     );
 };

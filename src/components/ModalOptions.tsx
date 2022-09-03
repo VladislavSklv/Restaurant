@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Slider from 'react-slick';
 import { IIngredient, IIngredientGroup } from '../API/vendorAPI';
 import { productsTabs } from '../App';
@@ -7,7 +6,7 @@ import OptionTab from './OptionTab';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useAppDispatch } from '../hooks/hooks';
-import { addIngredientsToProductByMyId, filterProducts } from '../redux/productSlice';
+import { addIngredientsToProductByMyId } from '../redux/productSlice';
 
 interface modalOptionsProps {
     ingredientsMainGroup: IIngredientGroup[];
@@ -16,21 +15,21 @@ interface modalOptionsProps {
     setIsModalComp: React.Dispatch<React.SetStateAction<boolean>>;
     id: string;
     myId: number;
-    initialSlide: number;
+    sliderRef: React.MutableRefObject<any>;
+    finalChosenIngredients: any;
+    setFinalChosenIngredients: React.Dispatch<any>;
 }
 
 export interface IChosenIngredients {
-    id: string;
+    id: number;
     name: string;
     price: number;
     myId?: number;
 }
 
-const ModalOptions:React.FC<modalOptionsProps> = ({ingredientsMainGroup, ingredientsOptional, isModalComp, setIsModalComp, id, myId, initialSlide}) => {
+const ModalOptions:React.FC<modalOptionsProps> = ({ingredientsMainGroup, ingredientsOptional, isModalComp, setIsModalComp, id, myId, sliderRef, finalChosenIngredients, setFinalChosenIngredients}) => {
     const [chosenIngredients, setChosenIngredients] = useState<IChosenIngredients[]>();
-    const [finalChosenIngredients, setFinalChosenIngredients] = useState<any>();
     const [hasMainIngredients, setHasMainIngredients] = useState(ingredientsMainGroup.length > 0);
-    const sliderRef = useRef<any>(null);
 
     let productsTabsNames: productsTabs[] = [];
 	ingredientsMainGroup.map(productTab => {
@@ -38,50 +37,52 @@ const ModalOptions:React.FC<modalOptionsProps> = ({ingredientsMainGroup, ingredi
 	});
     productsTabsNames.push({name: 'Дополнительно', id: 'optional'});
 
-    const navigate = useNavigate();
     const dispatch = useAppDispatch();
+
+    Telegram.WebApp.MainButton.onClick(() => {
+        setIsModalComp(false);
+        dispatch(addIngredientsToProductByMyId({ingredients: finalChosenIngredients, id, myId}));
+    });
 
     useEffect(() => {
         const fci = chosenIngredients?.map(chosenIngredient => {
             const {myId, ...rest} = chosenIngredient;
             return rest;
         });
+        fci?.sort(function (a, b) {
+            if (a.id > b.id) {
+              return 1;
+            }
+            if (a.id < b.id) {
+              return -1;
+            }
+            return 0;
+        })
         setFinalChosenIngredients(fci);
     }, [chosenIngredients]);
 
     const setBtnTrue = () => {
-        Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': 'Готово', 'is_active': true});
-        Telegram.WebApp.MainButton.onClick(() => {
-            if(finalChosenIngredients !== undefined) {
-                const p = new Promise((resolve, reject) => {
-                    dispatch(addIngredientsToProductByMyId({ingredients: finalChosenIngredients, id, myId}));
-                    resolve(true);
-                }).then(() =>{
-                    dispatch(filterProducts());
-                })
-            }
-            navigate('/cart');
-        });
+        Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': 'Готово', 'is_active': true}).enable();
     };
 
     const setBtnFalse = () => {
-        Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': 'Выберите состав', 'is_active': false});
-        Telegram.WebApp.MainButton.onClick(() => {
-            return false;
-        });
+        Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': 'Выберите состав', 'is_active': false}).disable();
     };
 
-    if(hasMainIngredients) setBtnFalse();
-    else setBtnTrue();
+    if(hasMainIngredients && isModalComp) setBtnFalse();
+    else if(isModalComp) setBtnTrue();
 
     useEffect(() => {
         if(isModalComp){
             if(ingredientsMainGroup.length > 0 && finalChosenIngredients !== undefined && chosenIngredients !== undefined){
                 const arrayWithoutOptional = chosenIngredients.filter((ingredient: any) => ingredient.myId !== 99999999);
-                if(ingredientsMainGroup.length <= arrayWithoutOptional.length) setBtnTrue(); 
-                else setBtnFalse();
-            } else if(finalChosenIngredients !== undefined && chosenIngredients !== undefined) setBtnTrue();
-        } else setBtnFalse();
+                if(ingredientsMainGroup.length === arrayWithoutOptional.length) {
+                    setBtnTrue();
+                } else setBtnFalse();
+            } else if(finalChosenIngredients !== undefined && chosenIngredients !== undefined) {
+                setBtnTrue();
+            };
+        };
     }, [finalChosenIngredients]);
 
     const sliderSettings = {
@@ -91,7 +92,6 @@ const ModalOptions:React.FC<modalOptionsProps> = ({ingredientsMainGroup, ingredi
         slidesToShow: 1,
         slidesToScroll: 1,
         adaptiveHeight: true,
-        initialSlide,
         customPaging: function(i: number) {
             return (
                 <a

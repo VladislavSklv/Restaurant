@@ -18,8 +18,9 @@ const ProductInCart:React.FC<prodcutInCartProps> = ({product}) => {
     },  []);
 
     useEffect(() => {
+        console.log(product);
         setNumberOf(product.quantity);
-    }, [product])
+    }, [product]);
 
     const dispatch = useAppDispatch();
 

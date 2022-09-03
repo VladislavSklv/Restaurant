@@ -21,7 +21,7 @@ export interface ProductMenuProps{
 }
 
 export interface IIngredient {
-    id: string;
+    id: number;
     name: string;
     price: number;
 }
@@ -48,6 +48,22 @@ export interface ProductDetailsProps{
     vendorId: number;
     productId: string;
 }
+
+export interface IOrderProduct {
+    id: number,
+    name: string,
+    price: number,
+    quantity: number,
+    ingredients: IIngredient[]
+}
+
+export interface IOrder {
+    user_id: number,
+    vendor_id: number,
+    place: number,
+    products: IOrderProduct[]
+}
+ 
 
 export const vendorApi = createApi({
     reducerPath: 'vendorApi',

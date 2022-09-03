@@ -42,29 +42,28 @@ const productSlice = createSlice({
                 let mainProduct = {...state.products[j], quantity: 0};
                 state.products.forEach(product => {
                     if(mainProduct.id === product.id && mainProduct.ingredients.length === 0 && product.ingredients.length === 0){
-                        mainProduct.quantity += 1;
+                        mainProduct.quantity += product.quantity;
                     } else if (mainProduct.id === product.id && mainProduct.ingredients.length === product.ingredients.length && mainProduct.ingredients.length !== 0){
-                        let checker = false;
+                        let checkerArray = [];
                         for(let p = 0; p < mainProduct.ingredients.length; p++) {
                             for (let i = 0; i < product.ingredients.length; i++){
                                 if(mainProduct.ingredients[p].id === product.ingredients[i].id) {
-                                    checker = true;
-                                    break;
+                                    checkerArray.push(true);
                                 }
                             }
-                            if(!checker) {
-                                break;
-                            }
                         };
-                        if(checker){
-                            mainProduct.quantity += 1;
+                        if(checkerArray.length === mainProduct.ingredients.length){
+                            mainProduct.quantity += product.quantity;
                         }
                     };
                 });
                 let checker = true;
-                filteredProducts.forEach(filteredProduct => {
-                    if(mainProduct.quantity <= 0 || (filteredProduct.id === mainProduct.id && JSON.stringify(filteredProduct.ingredients) === JSON.stringify(mainProduct.ingredients))) checker = false;
-                });
+                for(let i = 0; i < filteredProducts.length; i++) {
+                    if(mainProduct.quantity === 0 || (filteredProducts[i].id === mainProduct.id && JSON.stringify(filteredProducts[i].ingredients) === JSON.stringify(mainProduct.ingredients))) {
+                        checker = false;
+                        break;
+                    }
+                };
                 if(checker) filteredProducts.push(mainProduct);
 		    };
             state.products = [...filteredProducts];

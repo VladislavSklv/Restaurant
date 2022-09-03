@@ -24,11 +24,13 @@ const Product:React.FC<productProps> = ({product}) => {
     }, [numberOf])
 
     useEffect(() => {
-        if(products !== undefined && products.length > 0) {
+        if(products !== undefined) {
             let quantity = 0;
-            products.forEach(finalProduct => {
-                if(finalProduct.id === product.id) quantity += finalProduct.quantity;
-            });
+            if(products.length > 0) {
+                products.forEach(finalProduct => {
+                    if(finalProduct.id === product.id) quantity += finalProduct.quantity;
+                });
+            }
             setNumberOf(quantity);
             setMyId(prev => prev += quantity + 1);
         }

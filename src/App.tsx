@@ -3,11 +3,11 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {  useGetProductsMenuQuery } from './API/vendorAPI';
 import ErrorBlock from './components/ErrorBlock';
 import Loader from './components/Loader';
-import { useAppSelector } from './hooks/hooks';
+import { useAppDispatch, useAppSelector } from './hooks/hooks';
 import CartPage from './pages/CartPage';
 import MainMenuPage from './pages/MainMenuPage';
 import ProductDetailsPage from './pages/ProductDetailsPage';
-import { IfinalProduct } from './redux/productSlice';
+import { filterProducts, IfinalProduct } from './redux/productSlice';
 
 export interface productsTabs {
 	name: string;
@@ -31,8 +31,10 @@ function App() {
 			});
 			allProductsStringify.forEach(product => allProducts.push(JSON.parse(product)));
 			allProducts.forEach(product => {
-				price += product.price;
-				if(product.ingredients !== undefined && product.ingredients.length > 0) product.ingredients.forEach(ingredient => price += ingredient.price);
+				let thisPrice = product.price
+				if(product.ingredients !== undefined && product.ingredients.length > 0) product.ingredients.forEach(ingredient => thisPrice += ingredient.price);
+				thisPrice *= product.quantity;
+				price += thisPrice;
 			});
 			setTotalPrice(price);
 		} else setTotalPrice(0);
@@ -45,7 +47,7 @@ function App() {
 				{isLoading && <Route path='/' element={<Loader/>} />}
 				{isError && <Route path='/' element={<ErrorBlock/>} />}
 				<Route path='/details/:id/:myId' element={<ProductDetailsPage vendorId={productProps.vendorId}/>}/>
-				<Route path='/cart' element={<CartPage />}/>
+				<Route path='/cart' element={<CartPage vendorId={productProps.vendorId} />}/>
 			</Routes>
 		</BrowserRouter>
 	);

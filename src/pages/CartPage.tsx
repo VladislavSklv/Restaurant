@@ -1,35 +1,69 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { IOrder, IOrderProduct } from '../API/vendorAPI';
 import ProductInCart from '../components/ProductInCart';
 import MinMaxBtns from '../components/UI/MinMaxBtns';
 import { useAppDispatch, useAppSelector } from '../hooks/hooks';
 import { clearProducts } from '../redux/productSlice';
 
-const CartPage: React.FC = () => {
+interface cartPageProps{
+    vendorId: number;
+};
+
+const CartPage: React.FC<cartPageProps> = ({vendorId}) => {
     const {products} = useAppSelector(state => state.product);
     const [placeNumber, setPlaceNumber] = useState(1);
     const dispatch = useAppDispatch();
 
     const navigate = useNavigate();
 
+    let order: IOrder = {
+        user_id: Telegram.WebApp.initDataUnsafe.user?.id!,
+        place: placeNumber,
+        vendor_id: vendorId,
+        products: [],
+    };
+
     useEffect(() => {
         let totalPrice = 0;
         products.forEach(product => {
             totalPrice += product.price * product.quantity;
         });
-        Telegram.WebApp.MainButton.setParams({'is_visible': true, 'text': `Заказать | ${totalPrice} ₽`})
+        order.products = products.map(product => {
+            const {image, myId, id, ...rest} = product;
+            let array: IOrderProduct = {...rest, id: parseInt(product.id)};
+            return array;
+        });
+        Telegram.WebApp.MainButton.setParams({'is_visible': true, 'text': `Заказать | ${totalPrice} ₽`});
     }, [products]);
+
+    useEffect(() => {
+        console.log(order);
+    }, [order]);
 
     const onClickMinHandler = () => {
         setPlaceNumber(prev => {
             if(prev === 1) return prev;
             else return prev - 1;
         });
-    }
+    };
 
     const onClickMaxHandler = () => {
         setPlaceNumber(prev => prev + 1);
-    }
+    };
+
+    Telegram.WebApp.MainButton.onClick(() => {
+        fetch(`https://testwebprojects.ru`,{
+            body: JSON.stringify(order),
+            method: 'POST'
+        }).then(() => {
+            Telegram.WebApp.MainButton.disable().text = 'Заказ выполнен!';
+        }).then(() => {
+            dispatch(clearProducts());
+        }).then(() =>{
+            navigate('/');
+        });
+    });
 
     return (
         <div className='cart'>

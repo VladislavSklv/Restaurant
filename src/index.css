@@ -679,6 +679,18 @@ code {
 	animation: spin 2s linear infinite;
 	margin: 15vh auto 0;
 }
+
+.focus-anim::before{
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	animation: focus-anim 1s ease 500ms;
+	z-index: 2;
+	pointer-events: none;
+}
   
 /* Safari */
 @-webkit-keyframes spin {
@@ -689,6 +701,30 @@ code {
 @keyframes spin {
 	0% { transform: rotate(0deg); }
 	100% { transform: rotate(360deg); }
+}
+
+@keyframes focus-anim {
+	0% {
+		background-color: rgba(128, 128, 128, 0);
+	}
+	50% {
+		background-color: rgba(128, 128, 128, .4);
+	}
+	100%{
+		background-color: rgba(128, 128, 128, 0);
+	}
+}
+
+@-webkit-keyframes focus-anim {
+	0% {
+		background-color: rgba(152, 152, 152, 0);
+	}
+	50% {
+		background-color: rgba(152, 152, 152, .4);
+	}
+	100%{
+		background-color: rgba(152, 152, 152, 0);
+	}
 }
 
 .error-text{

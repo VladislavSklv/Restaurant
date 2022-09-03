@@ -5,6 +5,8 @@ import { productsTabs } from '../App';
 import ModalNavBar from '../components/ModalNavBar';
 import NavBar from '../components/NavBar';
 import ProductsList from '../components/ProductsList';
+import { useAppDispatch } from '../hooks/hooks';
+import { filterProducts } from '../redux/productSlice';
 
 interface mainMenuPageProps {
     productsTabs: IProductsTab[];
@@ -17,6 +19,7 @@ const MainMenuPage:React.FC<mainMenuPageProps> = ({productsTabs, totalPrice, set
     const [isModal, setIsModal] = useState(false);
     const [activeTab, setActiveTab] = useState(productsTabs[0].id);
 
+    const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
     let productsTabsNames: productsTabs[] = [];
@@ -24,11 +27,18 @@ const MainMenuPage:React.FC<mainMenuPageProps> = ({productsTabs, totalPrice, set
 		productsTabsNames.push({name: productTab.name, id: productTab.id});
 	});
 
+    Telegram.WebApp.MainButton.onClick(() => {
+        dispatch(filterProducts());
+        navigate('/cart');
+    });
+
     useEffect(() => {
         if(totalPrice !== 0) {
-            Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': `Заказать ${totalPrice} ₽`})
+            Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_active': true, 'is_visible': true, 'text_color': '#ffffff', 'text': `Заказать | ${totalPrice} ₽`})
+            .enable();
         } else {
-            Telegram.WebApp.MainButton.isVisible = false;
+            Telegram.WebApp.MainButton.setParams({'is_active': false, 'is_visible': false})
+            .disable();
         }
     }, [totalPrice]);
 
