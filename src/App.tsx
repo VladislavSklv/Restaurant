@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import {  useGetProductsMenuQuery } from './API/vendorAPI';
 import ErrorBlock from './components/ErrorBlock';
 import Loader from './components/Loader';
@@ -8,11 +8,6 @@ import CartPage from './pages/CartPage';
 import MainMenuPage from './pages/MainMenuPage';
 import ProductDetailsPage from './pages/ProductDetailsPage';
 import { IfinalProduct } from './redux/productSlice';
-
-export interface productsTabs {
-	name: string;
-	id: string;
-}
 
 function App() {
 	const productProps = {vendorId: 81225};
@@ -24,7 +19,7 @@ function App() {
 	useEffect(() => {
 		if(finalProducts !== undefined && finalProducts.length > 0) {
 			let price: number = 0;
-			let allProductsStringify: string[] = [];
+			let allProductsStringify: string[]  = [];
 			let allProducts: IfinalProduct[] = [];
 			finalProducts.forEach(product => {
 				if(!allProductsStringify.includes(JSON.stringify(product))) allProductsStringify.push(JSON.stringify(product));
@@ -39,7 +34,10 @@ function App() {
 			setTotalPrice(price);
 		} else setTotalPrice(0);
 	}, [finalProducts]);
-	
+
+
+	window.Telegram.WebApp.expand();
+
 	return (
 		<BrowserRouter>
 			<Routes>

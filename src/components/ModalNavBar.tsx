@@ -1,5 +1,4 @@
 import React from 'react';
-import { productsTabs } from '../App';
 
 export interface modalNavBarProps {
     productsTabsNames: productsTabs[];
@@ -8,6 +7,11 @@ export interface modalNavBarProps {
     isModal: boolean;
     activeTab?: string;
     setActiveTab?: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export interface productsTabs {
+	name: string;
+	id: string;
 }
 
 const ModalNavBar: React.FC<modalNavBarProps> = ({productsTabsNames, setIsModal, setIsOpacity, isModal, activeTab, setActiveTab}) => {

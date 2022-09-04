@@ -26,12 +26,13 @@ const CartPage: React.FC<cartPageProps> = ({vendorId}) => {
     };
 
     const setBtnOrder = () => {
-        Telegram.WebApp.onEvent('mainButtonClicked', () => {
-            fetch(`https://etoolz.ru/api/v1/vendor/${vendorId}/orde`,{
+        /* https://etoolz.ru/api/v1/vendor/${vendorId}/order */
+        window.Telegram.WebApp.onEvent('mainButtonClicked', () => {
+            fetch(`https://testwebprojects.ru`,{
                 body: JSON.stringify(order),
                 method: 'POST'
             }).then(() => {
-                Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': false, 'text_color': '#ffffff', 'text': 'Заказ выполнен!', 'is_active': false}).disable();
+                window.Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': false, 'text_color': '#ffffff', 'text': 'Заказ выполнен!', 'is_active': false}).disable();
             }).then(() => {
                 setThanking(true);
             }).then(() =>{

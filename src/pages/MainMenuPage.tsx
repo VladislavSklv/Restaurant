@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IProductsTab } from '../API/vendorAPI';
-import { productsTabs } from '../App';
-import ModalNavBar from '../components/ModalNavBar';
+import ModalNavBar, { productsTabs } from '../components/ModalNavBar';
 import NavBar from '../components/NavBar';
 import ProductsList from '../components/ProductsList';
 import { useAppDispatch } from '../hooks/hooks';
@@ -27,20 +26,32 @@ const MainMenuPage:React.FC<mainMenuPageProps> = ({productsTabs, totalPrice, set
 		productsTabsNames.push({name: productTab.name, id: productTab.id});
 	});
 
-    Telegram.WebApp.MainButton.onClick(() => {
-        dispatch(filterProducts());
-        navigate('/cart');
-    });
+    const setTgBtnMainMenu = () => {
+        window.Telegram.WebApp.MainButton.onClick(() => {
+            dispatch(filterProducts());
+            navigate('/cart');
+        });
+    };
+
+    setTgBtnMainMenu();
+
+    useEffect(() => {
+        setTgBtnMainMenu();
+    }, []);
 
     useEffect(() => {
         if(totalPrice !== 0) {
-            Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_active': true, 'is_visible': true, 'text_color': '#ffffff', 'text': `Заказать | ${totalPrice} ₽`})
+            window.Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_active': true, 'is_visible': true, 'text_color': '#ffffff', 'text': `Заказать | ${totalPrice} ₽`})
             .enable();
         } else {
-            Telegram.WebApp.MainButton.setParams({'is_active': false, 'is_visible': false})
+            window.Telegram.WebApp.MainButton.setParams({'is_active': false, 'is_visible': false})
             .disable();
         }
     }, [totalPrice]);
+
+    window.Telegram.WebApp.BackButton.isVisible = true;
+	window.Telegram.WebApp.BackButton.show();
+	window.Telegram.WebApp.BackButton.onClick(() => navigate(-1));
 
     return (
         <div>

@@ -11,6 +11,7 @@ interface productProps {
 
 const Product:React.FC<productProps> = ({product}) => {
     const [numberOf, setNumberOf] = useState(0);
+    const [price, setPrice] = useState(0);
     const productRef = useRef<HTMLDivElement | any>();
     const navigate = useNavigate();
     const [myId, setMyId] = useState(1);
@@ -21,7 +22,7 @@ const Product:React.FC<productProps> = ({product}) => {
     useEffect(() => {
         if(numberOf === 0) productRef.current.style.boxShadow = '0px 3px 12px rgba(0, 0, 0, 0.06)';
         else productRef.current.style.boxShadow = '0px 3px 12px rgba(0, 0, 0, 0.06), inset 0px -3px 0px #3F8AE0';
-    }, [numberOf])
+    }, [numberOf]);
 
     useEffect(() => {
         if(products !== undefined) {
@@ -33,7 +34,19 @@ const Product:React.FC<productProps> = ({product}) => {
             }
             setNumberOf(quantity);
             setMyId(prev => prev += quantity + 1);
-        }
+        };
+        if(products !== undefined && products.length > 0) {
+            let thisPrice = 0;
+            products.forEach(thisProduct => {
+                if(thisProduct.id === product.id){
+                    thisPrice += thisProduct.price;
+                    thisProduct.ingredients.forEach(thisIngredient => {
+                        thisPrice += thisIngredient.price;
+                    });
+                };
+            });
+            setPrice(thisPrice);
+        };
     }, [products]);
 
     const onClickMinHandler = () => {
@@ -82,7 +95,7 @@ const Product:React.FC<productProps> = ({product}) => {
             </div>
             <div className='product__content'>
                 <h2 onClick={() => navigate(`/details/${product.id}/${myId - 1}`)} className='product__name'>{product.name}</h2>
-                <p className='product__weight'>{product.weight && `${product.weight} г`}</p>
+                <p className='product__weight'>{numberOf > 0 ? <> {product.weight && `${product.weight} г • `}<span className='product__price'>{price} ₽</span></> : (product.weight && `${product.weight} г`)}</p>
                 {numberOf === 0 
                     ? <button 
                         onClick={() => {

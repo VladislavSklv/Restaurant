@@ -1,5 +1,5 @@
 import React from 'react';
-import { productsTabs } from '../App';
+import { productsTabs } from './ModalNavBar';
 
 export interface navBarProps {
     productsTabsNames: productsTabs[];

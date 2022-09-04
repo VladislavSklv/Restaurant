@@ -66,36 +66,50 @@ const ProductDetailsPage: React.FC<productDetailsPageProps> = ({vendorId}) => {
         };
     }, [details]);
 
+    const setBackBtn = () => {
+        if(isModalComp === true){
+            window.Telegram.WebApp.BackButton.hide();
+        } else {
+            window.Telegram.WebApp.BackButton.show();
+        }
+    };
+    
+    setBackBtn();
+    useEffect(() => {
+        setBackBtn();
+    }, [isModalComp]);
+
     useEffect(() => {
         if(details !== undefined && isModalComp === false && numberOf > 0) {
-            Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': `Добавить к заказу | ${price} ₽`, 'is_active': true})
+            window.Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': `Добавить к заказу | ${price} ₽`, 'is_active': true})
             .enable();
         };
         if(details !== undefined && isModalComp === false && numberOf === 0){
-            Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': `Вернуться в меню`, 'is_active': true})
+            window.Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': `Вернуться в меню`, 'is_active': true})
             .enable();
         }
     }, [price, isModalComp, numberOf]);
 
+
     if(details !== undefined && isModalComp === false && numberOf > 0) {
-        Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': `Добавить к заказу | ${price} ₽`, 'is_active': true})
+        window.Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': `Добавить к заказу | ${price} ₽`, 'is_active': true})
         .enable();
     };
 
     if(details !== undefined && isModalComp === false && numberOf === 0){
-        Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': `Вернуться в меню`, 'is_active': true})
+        window.Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': `Вернуться в меню`, 'is_active': true})
         .enable();
     };
 
     if(isModalComp === false && details !== undefined && id !== undefined && myId !== undefined) {
-        Telegram.WebApp.MainButton.onClick(() => {
+        window.Telegram.WebApp.MainButton.onClick(() => {
             dispatch(filterProducts());
             navigate('/');
         });
     };
 
     if(isModalComp === true && id !== undefined && myId !== undefined) {
-        Telegram.WebApp.MainButton.onClick(() => {
+        window.Telegram.WebApp.MainButton.onClick(() => {
             setIsModalComp(false);
             dispatch(addIngredientsToProductByMyId({ingredients: finalChosenIngredients!, id, myId: parseInt(myId)}));
             navigate('');
