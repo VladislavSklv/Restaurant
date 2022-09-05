@@ -49,10 +49,6 @@ const MainMenuPage:React.FC<mainMenuPageProps> = ({productsTabs, totalPrice, set
         }
     }, [totalPrice]);
 
-    window.Telegram.WebApp.BackButton.isVisible = true;
-	window.Telegram.WebApp.BackButton.show();
-	window.Telegram.WebApp.BackButton.onClick(() => navigate(-1));
-
     return (
         <div>
             <NavBar activeTab={activeTab} setActiveTab={setActiveTab} setIsModal={setIsModal} setIsOpacity={setIsOpacity} productsTabsNames={productsTabsNames} isHamburger={true} ></NavBar>

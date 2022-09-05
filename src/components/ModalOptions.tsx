@@ -62,11 +62,11 @@ const ModalOptions:React.FC<modalOptionsProps> = ({ingredientsMainGroup, ingredi
     }, [chosenIngredients]);
 
     const setBtnTrue = () => {
-        Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': 'Готово', 'is_active': true}).enable();
+        window.Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': 'Готово', 'is_active': true}).enable();
     };
 
     const setBtnFalse = () => {
-        Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': 'Выберите состав', 'is_active': false}).disable();
+        window.Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': 'Выберите состав', 'is_active': false}).disable();
     };
 
     if(hasMainIngredients === true && isModalComp === true && (finalChosenIngredients === undefined || finalChosenIngredients.length === 0) && (chosenIngredients === undefined || chosenIngredients.length === 0)) setBtnFalse();

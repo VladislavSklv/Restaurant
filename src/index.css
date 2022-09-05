@@ -204,6 +204,7 @@ code {
 	padding: 10px;
 	font-size: 28px;
 	font-weight: 800px;
+	pointer-events: none;
 }
 
 .thanking_active{

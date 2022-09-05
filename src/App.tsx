@@ -35,9 +35,6 @@ function App() {
 		} else setTotalPrice(0);
 	}, [finalProducts]);
 
-
-	window.Telegram.WebApp.expand();
-
 	return (
 		<BrowserRouter>
 			<Routes>

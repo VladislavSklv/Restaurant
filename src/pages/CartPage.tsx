@@ -4,16 +4,17 @@ import { IOrder, IOrderProduct } from '../API/vendorAPI';
 import ProductInCart from '../components/ProductInCart';
 import MinMaxBtns from '../components/UI/MinMaxBtns';
 import { useAppDispatch, useAppSelector } from '../hooks/hooks';
-import { clearProducts } from '../redux/productSlice';
+import { clearProducts, IfinalProduct } from '../redux/productSlice';
 
 interface cartPageProps{
     vendorId: number;
 };
 
 const CartPage: React.FC<cartPageProps> = ({vendorId}) => {
-    const {products} = useAppSelector(state => state.product);
     const [placeNumber, setPlaceNumber] = useState(1);
     const [thanking, setThanking] = useState(false);
+
+    const {products} = useAppSelector(state => state.product);
     const dispatch = useAppDispatch();
 
     const navigate = useNavigate();
@@ -25,10 +26,12 @@ const CartPage: React.FC<cartPageProps> = ({vendorId}) => {
         products: [],
     };
 
+    window.Telegram.WebApp.BackButton.onClick(() => navigate(-1));
+
     const setBtnOrder = () => {
         /* https://etoolz.ru/api/v1/vendor/${vendorId}/order */
         window.Telegram.WebApp.onEvent('mainButtonClicked', () => {
-            fetch(`https://testwebprojects.ru`,{
+            fetch(`https://etoolz.ru/api/v1/vendor/${vendorId}/order`,{
                 body: JSON.stringify(order),
                 method: 'POST'
             }).then(() => {
@@ -49,14 +52,22 @@ const CartPage: React.FC<cartPageProps> = ({vendorId}) => {
 
     useEffect(() => {
         let totalPrice = 0;
-        products.forEach(product => {
-            totalPrice += product.price * product.quantity;
-        });
-        order.products = products.map(product => {
-            const {image, myId, id, ...rest} = product;
-            let array: IOrderProduct = {...rest, id: parseInt(product.id)};
-            return array;
-        });
+        if(products !== undefined && products.length > 0) {
+			let price: number = 0;
+			let allProductsStringify: string[]  = [];
+			let allProducts: IfinalProduct[] = [];
+			products.forEach(product => {
+				if(!allProductsStringify.includes(JSON.stringify(product))) allProductsStringify.push(JSON.stringify(product));
+			});
+			allProductsStringify.forEach(product => allProducts.push(JSON.parse(product)));
+			allProducts.forEach(product => {
+				let thisPrice = product.price
+				if(product.ingredients !== undefined && product.ingredients.length > 0) product.ingredients.forEach(ingredient => thisPrice += ingredient.price);
+				thisPrice *= product.quantity;
+				price += thisPrice;
+			});
+			totalPrice = price;
+		} else totalPrice = 0;
         Telegram.WebApp.MainButton.setParams({'is_visible': true, 'text': `Заказать | ${totalPrice} ₽`});
     }, [products]);
 

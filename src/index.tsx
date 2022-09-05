@@ -20,6 +20,10 @@ const store = configureStore({
 	reducer: rootReducer,
 });
 
+window.Telegram.WebApp.BackButton.show();
+window.Telegram.WebApp.BackButton.onClick(() => window.history.back());
+window.Telegram.WebApp.expand();
+
 root.render(
 	<Provider store={store}>
 		<App/>

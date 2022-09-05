@@ -66,19 +66,6 @@ const ProductDetailsPage: React.FC<productDetailsPageProps> = ({vendorId}) => {
         };
     }, [details]);
 
-    const setBackBtn = () => {
-        if(isModalComp === true){
-            window.Telegram.WebApp.BackButton.hide();
-        } else {
-            window.Telegram.WebApp.BackButton.show();
-        }
-    };
-    
-    setBackBtn();
-    useEffect(() => {
-        setBackBtn();
-    }, [isModalComp]);
-
     useEffect(() => {
         if(details !== undefined && isModalComp === false && numberOf > 0) {
             window.Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': `Добавить к заказу | ${price} ₽`, 'is_active': true})
@@ -101,20 +88,42 @@ const ProductDetailsPage: React.FC<productDetailsPageProps> = ({vendorId}) => {
         .enable();
     };
 
-    if(isModalComp === false && details !== undefined && id !== undefined && myId !== undefined) {
-        window.Telegram.WebApp.MainButton.onClick(() => {
-            dispatch(filterProducts());
-            navigate('/');
-        });
-    };
+    const setMainBtnTrue = () => {
+        if(isModalComp === false && details !== undefined && id !== undefined && myId !== undefined) {
+            window.Telegram.WebApp.MainButton.onClick(() => {
+                navigate('/');
+            });
+        };
+    }
 
-    if(isModalComp === true && id !== undefined && myId !== undefined) {
-        window.Telegram.WebApp.MainButton.onClick(() => {
-            setIsModalComp(false);
-            dispatch(addIngredientsToProductByMyId({ingredients: finalChosenIngredients!, id, myId: parseInt(myId)}));
-            navigate('');
-        });
+    const setMainButtonModal = () => {
+        if(isModalComp === true && id !== undefined && myId !== undefined) {
+            window.Telegram.WebApp.MainButton.onClick(() => {
+                setIsModalComp(false);
+                dispatch(addIngredientsToProductByMyId({ingredients: finalChosenIngredients!, id, myId: parseInt(myId)}));
+                navigate('');
+            });
+        };
+    }
+
+    const setBackBtn = () => {
+        if(isModalComp === true){
+            window.Telegram.WebApp.BackButton.hide();
+        } else {
+            window.Telegram.WebApp.BackButton.show();
+        };
     };
+    
+    setBackBtn();
+    setMainBtnTrue();
+    useEffect(() => {
+        setBackBtn();
+        if(isModalComp === true){
+            setMainButtonModal();
+        } else {
+            setMainBtnTrue();
+        }
+    }, [isModalComp, finalChosenIngredients]);
 
     const onClickMinHandler = () => {
         if(numberOf > 1 && details !== undefined) {

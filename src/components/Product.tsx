@@ -39,10 +39,13 @@ const Product:React.FC<productProps> = ({product}) => {
             let thisPrice = 0;
             products.forEach(thisProduct => {
                 if(thisProduct.id === product.id){
-                    thisPrice += thisProduct.price;
+                    let thisProductPrice = 0;
+                    thisProductPrice += thisProduct.price;
                     thisProduct.ingredients.forEach(thisIngredient => {
-                        thisPrice += thisIngredient.price;
+                        thisProductPrice += thisIngredient.price;
                     });
+                    thisProductPrice *= thisProduct.quantity;
+                    thisPrice += thisProductPrice;
                 };
             });
             setPrice(thisPrice);
@@ -89,12 +92,47 @@ const Product:React.FC<productProps> = ({product}) => {
     return (
         <div ref={productRef} className='product'>
             <div 
-                onClick={() => navigate(`/details/${product.id}/${myId - 1}`)}
+                onClick={() => {
+                    /* if(numberOf === 0) {
+                        dispatch(addProduct({
+                            myId: myId,
+                            id: product.id,
+                            name: product.name,
+                            price: product.price,
+                            quantity: 1,
+                            image: product.image,
+                            ingredients: [],
+                        }));
+                        navigate(`/details/${product.id}/${myId}`);
+                    } else {
+                        navigate(`/details/${product.id}/${myId - 1}`);
+                    } */
+                    navigate(`/details/${product.id}/${myId - 1}`);
+                }}
                 className='product__img'
             ><img src={product.image || 'https://flyclipart.com/thumb2/icono-plato-160306.png'} alt={product.name} />
             </div>
             <div className='product__content'>
-                <h2 onClick={() => navigate(`/details/${product.id}/${myId - 1}`)} className='product__name'>{product.name}</h2>
+                <h2 
+                    onClick={() => {
+                        /* if(numberOf === 0) {
+                            dispatch(addProduct({
+                                myId: myId,
+                                id: product.id,
+                                name: product.name,
+                                price: product.price,
+                                quantity: 1,
+                                image: product.image,
+                                ingredients: [],
+                            }));
+                            navigate(`/details/${product.id}/${myId}`);
+                        } else {
+                            navigate(`/details/${product.id}/${myId - 1}`);
+                        } */
+                        navigate(`/details/${product.id}/${myId - 1}`);
+                    }}
+                    className='product__name'
+                >{product.name}</h2>
                 <p className='product__weight'>{numberOf > 0 ? <> {product.weight && `${product.weight} г • `}<span className='product__price'>{price} ₽</span></> : (product.weight && `${product.weight} г`)}</p>
                 {numberOf === 0 
                     ? <button 
