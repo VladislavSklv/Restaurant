@@ -19,10 +19,10 @@ const Product:React.FC<productProps> = ({product}) => {
     const dispatch = useAppDispatch();
     const {products} = useAppSelector(state => state.product);
 
-    useEffect(() => {
+    /* useEffect(() => {
         if(numberOf === 0) productRef.current.style.boxShadow = '0px 3px 12px rgba(0, 0, 0, 0.06)';
         else productRef.current.style.boxShadow = '0px 3px 12px rgba(0, 0, 0, 0.06), inset 0px -3px 0px #3F8AE0';
-    }, [numberOf]);
+    }, [numberOf]); */
 
     useEffect(() => {
         if(products !== undefined) {
@@ -110,7 +110,7 @@ const Product:React.FC<productProps> = ({product}) => {
                     navigate(`/details/${product.id}/${myId - 1}`);
                 }}
                 className='product__img'
-            ><img src={product.image || 'https://flyclipart.com/thumb2/icono-plato-160306.png'} alt={product.name} />
+            ><img src={product.image || '../images/food.svg'} alt={product.name} />
             </div>
             <div className='product__content'>
                 <h2 
@@ -133,7 +133,7 @@ const Product:React.FC<productProps> = ({product}) => {
                     }}
                     className='product__name'
                 >{product.name}</h2>
-                <p className='product__weight'>{numberOf > 0 ? <> {product.weight && `${product.weight} г • `}<span className='product__price'>{price} ₽</span></> : (product.weight && `${product.weight} г`)}</p>
+                <p className='product__weight'>{numberOf > 0 ? <><span className='product__price'>{price}₽</span> {product.weight && `/ ${product.weight} гр `} </> : (product.weight && `${product.weight} гр`)}</p>
                 {numberOf === 0 
                     ? <button 
                         onClick={() => {
@@ -160,7 +160,7 @@ const Product:React.FC<productProps> = ({product}) => {
                             setNumberOf(1);
                         }}
                         className='product__btn'
-                    >{product.price} ₽</button>
+                    >{product.price}₽</button>
                     : <MinMaxBtns numberOf={numberOf} onClickMax={onClickMaxHandler} onClickMin={onClickMinHandler} />
                 }
             </div>

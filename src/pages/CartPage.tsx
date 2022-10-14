@@ -13,6 +13,7 @@ interface cartPageProps{
 const CartPage: React.FC<cartPageProps> = ({vendorId}) => {
     const [placeNumber, setPlaceNumber] = useState(1);
     const [thanking, setThanking] = useState(false);
+    const [totalPrice, setTotalPrice] = useState(0);
 
     const {products} = useAppSelector(state => state.product);
     const dispatch = useAppDispatch();
@@ -51,7 +52,7 @@ const CartPage: React.FC<cartPageProps> = ({vendorId}) => {
     }, [placeNumber]);
 
     useEffect(() => {
-        let totalPrice = 0;
+        let fullPrice = 0;
         if(products !== undefined && products.length > 0) {
 			let price: number = 0;
 			let allProductsStringify: string[]  = [];
@@ -66,9 +67,10 @@ const CartPage: React.FC<cartPageProps> = ({vendorId}) => {
 				thisPrice *= product.quantity;
 				price += thisPrice;
 			});
-			totalPrice = price;
-		} else totalPrice = 0;
-        Telegram.WebApp.MainButton.setParams({'is_visible': true, 'text': `Заказать | ${totalPrice} ₽`});
+			fullPrice = price;
+		} else fullPrice = 0;
+        Telegram.WebApp.MainButton.setParams({'is_visible': true, 'text': `Заказать | ${fullPrice} ₽`});
+        setTotalPrice(fullPrice);
     }, [products]);
 
     useEffect(() => {
@@ -91,7 +93,7 @@ const CartPage: React.FC<cartPageProps> = ({vendorId}) => {
     return (
         <div className='cart'>
             <div className='cart__title-with-icon'>
-                <h1 className='title'>Корзина</h1>
+                <h1 className='title title_cart'>Корзина</h1>
                 <div
                     onClick={() => {
                         dispatch(clearProducts());
@@ -103,16 +105,10 @@ const CartPage: React.FC<cartPageProps> = ({vendorId}) => {
                 {products !== undefined && products.map(product => (
                     <ProductInCart key={product.myId + 'myId' + product.id} product={product} />
                 ))}
-                <div className='cart-item'>
-                    <div className='cart-item__img place-number-img'><img src='../../images/tables.svg' alt='place' /></div>
-                    <div className='cart-item__content'>
-                        <h2 className='cart-item__title'>Номер стола</h2>
-                        <MinMaxBtns onClickMin={onClickMinHandler} onClickMax={onClickMaxHandler} numberOf={placeNumber} noText={true} />
-                    </div>
-                </div>
                 <div className={thanking ? 'opacity-block opacity-block_active' : 'opacity-block'}></div>
                 <div className={thanking ? 'thanking thanking_active' : 'thanking'}>Спасибо за заказ!</div>
             </div>
+            <div className='cart__total'>Общая стоимость <span>{totalPrice}₽</span></div>
         </div>
     );
 };

@@ -28,6 +28,8 @@ const ProductDetailsPage: React.FC<productDetailsPageProps> = ({vendorId}) => {
 
     const navigate = useNavigate();
 
+    console.log(details)
+
     useEffect(() => {
         let checker = false;
         products.forEach(product => {

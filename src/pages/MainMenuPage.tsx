@@ -54,9 +54,10 @@ const MainMenuPage:React.FC<mainMenuPageProps> = ({productsTabs, totalPrice, set
             <NavBar activeTab={activeTab} setActiveTab={setActiveTab} setIsModal={setIsModal} setIsOpacity={setIsOpacity} productsTabsNames={productsTabsNames} isHamburger={true} ></NavBar>
             <div className='mainMenu'>
                 <ProductsList setActiveTab={setActiveTab} productsTabs={productsTabs}/>
-                <div style={isOpacity ? {'opacity': '0.54'} : {'opacity' : '0'}} className='opacity-block'></div>
+                <div onClick={() => {setIsOpacity(false); setIsModal(false)}} style={isOpacity ? {'opacity': '0.35', 'pointerEvents': 'all'} : {'opacity' : '0'}} className='opacity-block'></div>
                 <ModalNavBar activeTab={activeTab} setActiveTab={setActiveTab} isModal={isModal} setIsModal={setIsModal} setIsOpacity={setIsOpacity} productsTabsNames={productsTabsNames}/>
             </div>
+            <button onClick={() => navigate('/cart')}>Cart</button>
         </div>
     );
 };
