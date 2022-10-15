@@ -448,16 +448,63 @@ code {
 }
 
 .product-id{
+	position: fixed;
 	padding-bottom: 60px;
+	height: calc(100% - 8px);
+	bottom: 0;
 }
 
 .product-id__img{
-	width: calc(100% - 32px);
-	margin: 15px auto 3px;
+	position: relative;
+	width: 100%;
+	border-radius: 10px;
 }
 
 .product-id__img > img{
 	width: 100%;
+	border-radius: 10px;
+}
+
+.product-id__weight{
+	position: absolute;
+	left: 12px;
+	bottom: 12px;
+	padding: 5px 8px;
+	gap: 10px;
+	background: #FBEC66;
+	border-radius: 100px;
+	font-weight: 700;
+	font-size: 13px;
+	line-height: 20px;
+	color: #292929;
+}
+
+.cross{
+	position: absolute;
+	top: 12px;
+	right: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	background: #FFFFFF;
+	border-radius: 100%;
+}
+
+.cross > span{
+	display: block;
+	height: 2px;
+	width: 18px;
+	border: none;
+	border-radius: 6px;
+	background: #292929;
+	transform: rotate(45deg);
+}
+
+.cross > span:first-child{
+	position: absolute;
+	transform: rotate(-45deg);
 }
 
 .product-id > .title{
@@ -466,29 +513,57 @@ code {
 }
 
 .product-id__title{
-	font-weight: 400;
-	font-size: 24px;
-	line-height: 32px;
-	font-feature-settings: 'case' on;
-	color: rgba(0, 0, 0, 0.87);
-	margin-bottom: 8px;
-	margin-left: 16px;
+	font-weight: 700;
+	font-size: 22px;
+	line-height: 125%;
+	letter-spacing: 0.005em;
+	color: #292929;
+	padding-left: 12px;
+	margin: 8px 0;
 }
 
 .product-id__descr{
 	font-weight: 400;
 	font-size: 14px;
-	line-height: 20px;
+	line-height: 125%;
 	color: #818C99;
-	margin-left: 16px;
-	margin-bottom: 20px;
+	padding-left: 12px;
 }
 
-.product-id > .product__numberof{
+.product-id__number{
+	position: absolute;
+	bottom: 1px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	height: 49px;
+	border-bottom: 1px solid #B8C1CC;
+	padding: 12px;
+	box-shadow: 0px 2px 6px rgba(85, 95, 105, 0.2);
+	background-color: #fff;
+}
+
+.product-id__number > .product__numberof{
+	position: relative;
+	width: 120px;
+	flex-grow: 0;
+	flex-shrink: 0;
+	margin-top: 16px;
+	margin-right: 12px;
+}
+
+.product-id__number > .title{
+	position: relative;
+	flex-grow: 0;
+	flex-shrink: 0;
+}
+
+/* .product-id > .product__numberof{
 	position: static;
 	width: 143px;
 	margin: 28px 0 13px 16px;
-}
+} */
 
 .product-id__btn{
 	display: flex;

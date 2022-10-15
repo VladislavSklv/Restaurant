@@ -8,12 +8,12 @@ import { clearProducts, IfinalProduct } from '../redux/productSlice';
 
 interface cartPageProps{
     vendorId: number;
+    totalPrice: number;
 };
 
-const CartPage: React.FC<cartPageProps> = ({vendorId}) => {
+const CartPage: React.FC<cartPageProps> = ({vendorId, totalPrice}) => {
     const [placeNumber, setPlaceNumber] = useState(1);
     const [thanking, setThanking] = useState(false);
-    const [totalPrice, setTotalPrice] = useState(0);
 
     const {products} = useAppSelector(state => state.product);
     const dispatch = useAppDispatch();
@@ -45,47 +45,6 @@ const CartPage: React.FC<cartPageProps> = ({vendorId}) => {
                 }, 1500)
             });
         });
-    };
-
-    useEffect(() => {
-        setBtnOrder();
-    }, [placeNumber]);
-
-    useEffect(() => {
-        let fullPrice = 0;
-        if(products !== undefined && products.length > 0) {
-			let price: number = 0;
-			let allProductsStringify: string[]  = [];
-			let allProducts: IfinalProduct[] = [];
-			products.forEach(product => {
-				if(!allProductsStringify.includes(JSON.stringify(product))) allProductsStringify.push(JSON.stringify(product));
-			});
-			allProductsStringify.forEach(product => allProducts.push(JSON.parse(product)));
-			allProducts.forEach(product => {
-				let thisPrice = product.price
-				if(product.ingredients !== undefined && product.ingredients.length > 0) product.ingredients.forEach(ingredient => thisPrice += ingredient.price);
-				thisPrice *= product.quantity;
-				price += thisPrice;
-			});
-			fullPrice = price;
-		} else fullPrice = 0;
-        Telegram.WebApp.MainButton.setParams({'is_visible': true, 'text': `Заказать | ${fullPrice} ₽`});
-        setTotalPrice(fullPrice);
-    }, [products]);
-
-    useEffect(() => {
-        console.log(order);
-    }, [order]);
-
-    const onClickMinHandler = () => {
-        setPlaceNumber(prev => {
-            if(prev === 1) return prev;
-            else return prev - 1;
-        });
-    };
-
-    const onClickMaxHandler = () => {
-        setPlaceNumber(prev => prev + 1);
     };
 
     if(placeNumber > 0) setBtnOrder();

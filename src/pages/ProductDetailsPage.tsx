@@ -28,8 +28,6 @@ const ProductDetailsPage: React.FC<productDetailsPageProps> = ({vendorId}) => {
 
     const navigate = useNavigate();
 
-    console.log(details)
-
     useEffect(() => {
         let checker = false;
         products.forEach(product => {
@@ -68,7 +66,7 @@ const ProductDetailsPage: React.FC<productDetailsPageProps> = ({vendorId}) => {
         };
     }, [details]);
 
-    useEffect(() => {
+    /* useEffect(() => {
         if(details !== undefined && isModalComp === false && numberOf > 0) {
             window.Telegram.WebApp.MainButton.setParams({'color': '#4986CC', 'is_visible': true, 'text_color': '#ffffff', 'text': `Добавить к заказу | ${price} ₽`, 'is_active': true})
             .enable();
@@ -125,7 +123,7 @@ const ProductDetailsPage: React.FC<productDetailsPageProps> = ({vendorId}) => {
         } else {
             setMainBtnTrue();
         }
-    }, [isModalComp, finalChosenIngredients]);
+    }, [isModalComp, finalChosenIngredients]); */
 
     const onClickMinHandler = () => {
         if(numberOf > 1 && details !== undefined) {

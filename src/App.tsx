@@ -38,11 +38,10 @@ function App() {
 	return (
 		<BrowserRouter>
 			<Routes>
-				{products !== undefined && <Route path='/' element={<MainMenuPage totalPrice={totalPrice} setTotalPrice={setTotalPrice} productsTabs={products} />} />}
+				{products !== undefined && <Route path='/' element={<MainMenuPage vendorId={productProps.vendorId} totalPrice={totalPrice} setTotalPrice={setTotalPrice} productsTabs={products} />} />}
 				{isLoading && <Route path='/' element={<Loader/>} />}
 				{isError && <Route path='/' element={<ErrorBlock/>} />}
-				<Route path='/details/:id/:myId' element={<ProductDetailsPage vendorId={productProps.vendorId}/>}/>
-				<Route path='/cart' element={<CartPage vendorId={productProps.vendorId} />}/>
+				<Route path='/cart' element={<CartPage totalPrice={totalPrice} vendorId={productProps.vendorId} />}/>
 			</Routes>
 		</BrowserRouter>
 	);
