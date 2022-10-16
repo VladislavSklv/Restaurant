@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { IIngredient, useGetProductDetailsQuery } from '../API/vendorAPI';
 import ErrorBlock from './ErrorBlock';
+import IngredientsTab from './IngredientsTab';
 import Loader from './Loader';
 import { IChosenIngredients } from './ModalOptions';
 import MinMaxBtns from './UI/MinMaxBtns';
@@ -105,33 +106,17 @@ const ProductDetails:React.FC<productDetailsProps> = ({vendorId, detailsId, isDe
                         <div className="product-id__info">ккал<span>345</span></div>
                     </div>
                 </div>
-                {details.ingredientGroups.length > 0 && 
-                    <>
-                        {details.ingredientGroups.map(group => (
-                            <div key={group.id} className='product-id__group'>
-                                <div className='product-id__group-title'>{group.name}</div>
-                                <div className='product-id__ingredinets'>
-                                    {group.ingredients.map(ingredient => (
-                                        <div key={ingredient.id} className='product-id__ingredient'>
-                                            <MyRadio id={ingredient.id.toString()} inputName={group.name} label={ingredient.name} price={ingredient.price}/>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        ))}
-                    </>}
-                {details.ingredients.length > 0 &&
-                    <div className='product-id__group'>
-                        <div className='product-id__group-title'>Дополнительно</div>
-                        <div className='product-id__ingredinets'>
-                            {details.ingredients.map(ingredient=> (
-                                <div key={ingredient.id} className='product-id__ingredient'>
-                                    <MyCheckbox id={ingredient.id.toString()} inputName={ingredient.name} label={ingredient.name} price={ingredient.price} />
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                }
+                <form className='product-id__form'>
+                    {details.ingredientGroups.length > 0 && 
+                        <>
+                            {details.ingredientGroups.map(group => 
+                                <IngredientsTab groupName={group.name} ingredients={group.ingredients} isChecbox={false} />
+                            )}
+                        </>}
+                    {details.ingredients.length > 0 && 
+                        <IngredientsTab groupName='Дополнительно' ingredients={details.ingredients} isChecbox={true}/>
+                    }
+                </form>
                 <div className='product-id__number'>
                     <h2 className='title'>Количество:</h2>
                     <MinMaxBtns numberOf={numberOf} onClickMin={onClickMinHandler} onClickMax={onClickMaxHandler} />

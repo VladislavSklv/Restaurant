@@ -62,7 +62,7 @@ const MainMenuPage:React.FC<mainMenuPageProps> = ({productsTabs, totalPrice, set
                 <ModalNavBar activeTab={activeTab} setActiveTab={setActiveTab} isModal={isModal} setIsModal={setIsModal} setIsOpacity={setIsOpacity} productsTabsNames={productsTabsNames}/>
             </div>
             <button onClick={() => navigate('/cart')}>Cart</button> */}
-            <ProductDetails detailsId={detailsId} isDetails={isDetails} number={1} setDetailsId={setDetailsId} setIsDetails={setIsDetails} setIsOpacity={setIsOpacity} vendorId={vendorId} ></ProductDetails>
+            <ProductDetails detailsId={detailsId} isDetails={isDetails} number={1} setDetailsId={setDetailsId} setIsDetails={setIsDetails} setIsOpacity={setIsOpacity} vendorId={vendorId} />
         </div>
     );
 };
