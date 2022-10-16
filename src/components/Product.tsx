@@ -7,9 +7,13 @@ import MinMaxBtns from './UI/MinMaxBtns';
 
 interface productProps {
     product: IProduct;
+    setIsDetails: React.Dispatch<React.SetStateAction<boolean>>;
+    detailsId: number;
+    setDetailsId: React.Dispatch<React.SetStateAction<number>>;
+    setIsOpacity: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Product:React.FC<productProps> = ({product}) => {
+const Product:React.FC<productProps> = ({product, detailsId, setDetailsId, setIsDetails, setIsOpacity}) => {
     const [numberOf, setNumberOf] = useState(0);
     const [price, setPrice] = useState(0);
     const productRef = useRef<HTMLDivElement | any>();
@@ -93,21 +97,9 @@ const Product:React.FC<productProps> = ({product}) => {
         <div ref={productRef} className='product'>
             <div 
                 onClick={() => {
-                    /* if(numberOf === 0) {
-                        dispatch(addProduct({
-                            myId: myId,
-                            id: product.id,
-                            name: product.name,
-                            price: product.price,
-                            quantity: 1,
-                            image: product.image,
-                            ingredients: [],
-                        }));
-                        navigate(`/details/${product.id}/${myId}`);
-                    } else {
-                        navigate(`/details/${product.id}/${myId - 1}`);
-                    } */
-                    navigate(`/details/${product.id}/${myId - 1}`);
+                    setIsDetails(true);
+                    setDetailsId(parseInt(product.id));
+                    setIsOpacity(true);
                 }}
                 className='product__img'
             ><img src={product.image || '../images/food.svg'} alt={product.name} />
@@ -115,21 +107,9 @@ const Product:React.FC<productProps> = ({product}) => {
             <div className='product__content'>
                 <h2 
                     onClick={() => {
-                        /* if(numberOf === 0) {
-                            dispatch(addProduct({
-                                myId: myId,
-                                id: product.id,
-                                name: product.name,
-                                price: product.price,
-                                quantity: 1,
-                                image: product.image,
-                                ingredients: [],
-                            }));
-                            navigate(`/details/${product.id}/${myId}`);
-                        } else {
-                            navigate(`/details/${product.id}/${myId - 1}`);
-                        } */
-                        navigate(`/details/${product.id}/${myId - 1}`);
+                        setIsDetails(true);
+                        setDetailsId(parseInt(product.id));
+                        setIsOpacity(true);
                     }}
                     className='product__name'
                 >{product.name}</h2>

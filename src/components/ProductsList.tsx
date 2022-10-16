@@ -5,9 +5,13 @@ import Product from './Product';
 interface productListProps {
     productsTabs: IProductsTab[];
     setActiveTab: React.Dispatch<React.SetStateAction<string>>;
+    setIsDetails: React.Dispatch<React.SetStateAction<boolean>>;
+    detailsId: number;
+    setDetailsId: React.Dispatch<React.SetStateAction<number>>;
+    setIsOpacity: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const ProductsList:React.FC<productListProps> = ({productsTabs, setActiveTab}) => {
+const ProductsList:React.FC<productListProps> = ({productsTabs, setActiveTab, detailsId, setDetailsId, setIsDetails, setIsOpacity}) => {
     return (
         <>
             {productsTabs !== undefined && productsTabs.map(productsTab => (
@@ -22,7 +26,7 @@ const ProductsList:React.FC<productListProps> = ({productsTabs, setActiveTab}) =
                     <div className='title'>{productsTab.name}</div>
                     <div className='menu__wrapper'>
                         {productsTab.products.map(product => (
-                            <Product key={product.id} product={product} />
+                            <Product key={product.id} setIsOpacity={setIsOpacity} detailsId={detailsId} setDetailsId={setDetailsId} setIsDetails={setIsDetails} product={product} />
                         ))}
                     </div>
                 </div>

@@ -6,7 +6,6 @@ import NavBar from '../components/NavBar';
 import ProductDetails from '../components/ProductDetails';
 import ProductsList from '../components/ProductsList';
 import { useAppDispatch } from '../hooks/hooks';
-import { filterProducts } from '../redux/productSlice';
 
 interface mainMenuPageProps {
     productsTabs: IProductsTab[];
@@ -30,7 +29,7 @@ const MainMenuPage:React.FC<mainMenuPageProps> = ({productsTabs, totalPrice, set
 		productsTabsNames.push({name: productTab.name, id: productTab.id});
 	});
 
-    const setTgBtnMainMenu = () => {
+    /* const setTgBtnMainMenu = () => {
         window.Telegram.WebApp.MainButton.onClick(() => {
             dispatch(filterProducts());
             navigate('/cart');
@@ -51,18 +50,18 @@ const MainMenuPage:React.FC<mainMenuPageProps> = ({productsTabs, totalPrice, set
             window.Telegram.WebApp.MainButton.setParams({'is_active': false, 'is_visible': false})
             .disable();
         }
-    }, [totalPrice]);
+    }, [totalPrice]); */
 
     return (
         <div>
-            {/* <NavBar activeTab={activeTab} setActiveTab={setActiveTab} setIsModal={setIsModal} setIsOpacity={setIsOpacity} productsTabsNames={productsTabsNames} isHamburger={true} ></NavBar>
+            <NavBar activeTab={activeTab} setActiveTab={setActiveTab} setIsModal={setIsModal} setIsOpacity={setIsOpacity} productsTabsNames={productsTabsNames} isHamburger={true} ></NavBar>
             <div className='mainMenu'>
-                <ProductsList setActiveTab={setActiveTab} productsTabs={productsTabs}/>
-                <div onClick={() => {setIsOpacity(false); setIsModal(false)}} style={isOpacity ? {'opacity': '0.35', 'pointerEvents': 'all'} : {'opacity' : '0'}} className='opacity-block'></div>
+                <ProductsList setIsOpacity={setIsOpacity} detailsId={detailsId} setDetailsId={setDetailsId} setIsDetails={setIsDetails} setActiveTab={setActiveTab} productsTabs={productsTabs}/>
+                <div onClick={() => {setIsOpacity(false); setIsModal(false); setIsDetails(false)}} style={isOpacity ? {'opacity': '0.35', 'pointerEvents': 'all'} : {'opacity' : '0'}} className='opacity-block'></div>
+                <ProductDetails isDetails={isDetails} detailsId={detailsId} setDetailsId={setDetailsId} setIsDetails={setIsDetails} setIsOpacity={setIsOpacity} vendorId={vendorId} />
                 <ModalNavBar activeTab={activeTab} setActiveTab={setActiveTab} isModal={isModal} setIsModal={setIsModal} setIsOpacity={setIsOpacity} productsTabsNames={productsTabsNames}/>
             </div>
-            <button onClick={() => navigate('/cart')}>Cart</button> */}
-            <ProductDetails detailsId={detailsId} isDetails={isDetails} number={1} setDetailsId={setDetailsId} setIsDetails={setIsDetails} setIsOpacity={setIsOpacity} vendorId={vendorId} />
+            <button onClick={() => navigate('/cart')}>Cart</button>
         </div>
     );
 };

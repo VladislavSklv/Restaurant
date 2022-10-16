@@ -1,13 +1,15 @@
 import React from 'react';
+import { ChosenIngredientI } from '../ProductDetails';
 
 interface MyRadioProps{
     inputName: string;
     id: string;
     label: string;
     price: number;
+    onClickHandler?: ({ id, name }: ChosenIngredientI) => void
 }
 
-const MyRadio: React.FC<MyRadioProps> = ({inputName, id, label, price}) => {
+const MyRadio: React.FC<MyRadioProps> = ({inputName, id, label, price, onClickHandler}) => {
     return (
         <>
             <input 
@@ -16,8 +18,7 @@ const MyRadio: React.FC<MyRadioProps> = ({inputName, id, label, price}) => {
                 name={inputName}
                 id={id}
                 value={id}
-                onClick={() => {
-                }}
+                onClick={() => onClickHandler && onClickHandler({id: parseInt(id),inputName, price, name: label})}
             />
             <label htmlFor={id}>{label} <span>{price} ₽</span></label>   
         </>

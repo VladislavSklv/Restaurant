@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import { IIngredient } from '../API/vendorAPI';
+import { ChosenIngredientI } from './ProductDetails';
 import MyCheckbox from './UI/MyCheckbox';
 import MyRadio from './UI/MyRadio';
 
@@ -7,10 +8,29 @@ interface ingredientTabProps{
     groupName: string;
     ingredients: IIngredient[];
     isChecbox: boolean;
+    setChosenIngredients: React.Dispatch<React.SetStateAction<ChosenIngredientI[]>>
 }
 
-const IngredientsTab:React.FC<ingredientTabProps> = ({groupName, ingredients, isChecbox}) => {
+const IngredientsTab:React.FC<ingredientTabProps> = ({groupName, ingredients, isChecbox, setChosenIngredients}) => {
     const [isActive, setIsAvtive] = useState(false);
+
+    const onRadioClickHandler = ({id, inputName, name, price}: ChosenIngredientI) => {
+        setChosenIngredients(prev => {
+            let ingredients = prev.filter(ingr => ingr.inputName !== inputName);
+            return [...ingredients, {id, inputName, name, price}];
+        });
+    };
+
+    const onCheckboxClickHandler = ({id, inputName, name, price}: ChosenIngredientI) => {
+        setChosenIngredients(prev => {
+            let checker = false;
+            prev.forEach(item => {
+                if(item.id === id) checker = true;
+            });
+            if(checker) return prev.filter(item => item.id !== id);
+            else return [...prev, {id, inputName, name, price}];
+        });
+    };
 
     return (
         <div className={isActive ? 'product-id__group active-tab' : 'product-id__group'}>
@@ -22,8 +42,8 @@ const IngredientsTab:React.FC<ingredientTabProps> = ({groupName, ingredients, is
                 {ingredients.map(ingredient => (
                     <div key={ingredient.id} className='product-id__ingredient'>
                         {isChecbox 
-                        ? <MyCheckbox id={ingredient.id.toString()} inputName={ingredient.name} label={ingredient.name} price={ingredient.price} /> 
-                        : <MyRadio id={ingredient.id.toString()} inputName={groupName} label={ingredient.name} price={ingredient.price}/>}
+                        ? <MyCheckbox onClickHandler={onCheckboxClickHandler} id={ingredient.id.toString()} inputName={ingredient.name} label={ingredient.name} price={ingredient.price} /> 
+                        : <MyRadio onClickHandler={onRadioClickHandler} id={ingredient.id.toString()} inputName={groupName} label={ingredient.name} price={ingredient.price}/>}
                     </div>
                 ))}
             </div>

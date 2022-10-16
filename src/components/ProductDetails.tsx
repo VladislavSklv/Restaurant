@@ -1,12 +1,9 @@
-import React, {useState, useEffect} from 'react';
-import { IIngredient, useGetProductDetailsQuery } from '../API/vendorAPI';
+import React, {useState} from 'react';
+import { useGetProductDetailsQuery } from '../API/vendorAPI';
 import ErrorBlock from './ErrorBlock';
 import IngredientsTab from './IngredientsTab';
 import Loader from './Loader';
-import { IChosenIngredients } from './ModalOptions';
 import MinMaxBtns from './UI/MinMaxBtns';
-import MyCheckbox from './UI/MyCheckbox';
-import MyRadio from './UI/MyRadio';
 
 interface productDetailsProps {
     vendorId: number;
@@ -15,54 +12,23 @@ interface productDetailsProps {
     detailsId: number;
     setDetailsId: React.Dispatch<React.SetStateAction<number>>;
     setIsOpacity: React.Dispatch<React.SetStateAction<boolean>>;
-    number: number;
 }
 
-const ProductDetails:React.FC<productDetailsProps> = ({vendorId, detailsId, isDetails, setDetailsId, setIsDetails, setIsOpacity, number}) => {
+export interface ChosenIngredientI{
+    id: number;
+    name: string;
+    inputName: string;
+    price: number;
+}
+
+const ProductDetails:React.FC<productDetailsProps> = ({vendorId,isDetails ,detailsId, setDetailsId, setIsDetails, setIsOpacity}) => {
     const {isLoading, isError, data: details} = useGetProductDetailsQuery({productId: detailsId.toString(), vendorId});
-    const [numberOf, setNumberOf] = useState(number);
-    /* const [chosenIngredients, setChosenIngredients] = useState<IChosenIngredients[]>([]);
-    const [optionValue, setOptionValue] = useState('');
-    const [optionValues, setOptionValues] = useState<string[]>([]);
+    const [numberOf, setNumberOf] = useState(1);
+    const [chosenIngredients, setChosenIngredients] = useState<ChosenIngredientI[]>([]);
+    const [touchStart, setTouchStart] = useState(0);
+    const [touchMove, setTouchMove] = useState(0);
+    const [fullOpen, setFullOpen] = useState(false);
 
-    useEffect(() => {
-        if(optionValue !== undefined && optionValue.length > 0 && details !== undefined && details.ingredientGroups.length > 0){
-            setChosenIngredients(prev => {
-                if(prev !== undefined && prev.length > 0) {
-                    const array = prev.filter(ingredient => ingredient.myId !== JSON.parse(optionValue).myId);
-                    array.push(JSON.parse(optionValue));
-                    return [...array];
-                } else {
-                    return [JSON.parse(optionValue)];
-                };
-            });
-        };
-    }, [optionValue]);
-
-    useEffect(() => {
-        if(optionValues !== undefined && optionValues.length > 0 && details !== undefined && details.ingredientGroups.length > 0){
-            setChosenIngredients(prev => {
-                if(prev !== undefined && prev.length > 0) {
-                    const array = prev.filter(ingredient => ingredient.myId !== JSON.parse(optionValues[0]).myId);
-                    optionValues.forEach(option => {
-                        array.push(JSON.parse(option));
-                    });
-                    return array;
-                } else {
-                    const array: IIngredient[] = [];
-                    optionValues.forEach(option => {
-                        array.push(JSON.parse(option));
-                    });
-                    return array;
-                }
-            });
-        };
-        if(details !== undefined && !(details.ingredientGroups.length > 0)) {
-            const array: IIngredient[] = [];
-            optionValues.forEach(item => array.push(JSON.parse(item)));
-            setChosenIngredients(array);
-        }
-    }, [optionValues]); */
 
     const onClickMinHandler = () => {
         if(numberOf > 1 && details !== undefined) {
@@ -82,17 +48,14 @@ const ProductDetails:React.FC<productDetailsProps> = ({vendorId, detailsId, isDe
         }
     };
 
-    console.log(details);
-
     return (
         <>
             {isLoading && <Loader/>}
             {isError && <ErrorBlock/>}
             {details !== undefined && 
-            <div className='product-id'>
+            <div style={isDetails ? {'bottom': '0'} : {'bottom': '-100%'}} className={fullOpen ? 'product-id product-id__full' : 'product-id'}>
                 <div className='product-id__img'>
                     <img src={details.image || '../images/food.svg'} alt={details.name} />
-                    <div className='cross'><span></span><span></span></div>
                     <div className='product-id__weight'>{details.weight} гр</div>
                 </div>
                 <h1 className='product-id__title'>{details.name}</h1>
@@ -110,17 +73,47 @@ const ProductDetails:React.FC<productDetailsProps> = ({vendorId, detailsId, isDe
                     {details.ingredientGroups.length > 0 && 
                         <>
                             {details.ingredientGroups.map(group => 
-                                <IngredientsTab groupName={group.name} ingredients={group.ingredients} isChecbox={false} />
+                                <IngredientsTab key={group.id} setChosenIngredients={setChosenIngredients} groupName={group.name} ingredients={group.ingredients} isChecbox={false} />
                             )}
                         </>}
                     {details.ingredients.length > 0 && 
-                        <IngredientsTab groupName='Дополнительно' ingredients={details.ingredients} isChecbox={true}/>
+                        <IngredientsTab key={'optional'} setChosenIngredients={setChosenIngredients} groupName='Дополнительно' ingredients={details.ingredients} isChecbox={true}/>
                     }
                 </form>
                 <div className='product-id__number'>
                     <h2 className='title'>Количество:</h2>
                     <MinMaxBtns numberOf={numberOf} onClickMin={onClickMinHandler} onClickMax={onClickMaxHandler} />
                 </div>
+                <div 
+                    className='product-id__line'
+                    onTouchStart={(e) => {
+                        setTouchStart(e.touches[0].screenY);
+                    }}
+                    onTouchMove={(e) => {
+                        setTouchMove(e.touches[0].screenY);
+                    }}
+                    onTouchEnd={() => {
+                        if(!fullOpen){
+                            if(touchMove < touchStart) {
+                                setFullOpen(true);
+                            } else if(touchMove > touchStart) {
+                                setIsDetails(false);
+                                setIsOpacity(false);
+                            }
+                        } else {
+                            setFullOpen(false);
+                        }
+                        setTouchMove(0);
+                        setTouchStart(0);
+                    }} 
+                ><span></span></div>
+                <div 
+                    className='cross'
+                    onClick={() => {
+                        setIsDetails(false);
+                        setIsOpacity(false);
+                    }}
+                ><span></span><span></span></div>
             </div>}
         </>
     );
