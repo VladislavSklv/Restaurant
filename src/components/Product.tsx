@@ -23,11 +23,6 @@ const Product:React.FC<productProps> = ({product, detailsId, setDetailsId, setIs
     const dispatch = useAppDispatch();
     const {products} = useAppSelector(state => state.product);
 
-    /* useEffect(() => {
-        if(numberOf === 0) productRef.current.style.boxShadow = '0px 3px 12px rgba(0, 0, 0, 0.06)';
-        else productRef.current.style.boxShadow = '0px 3px 12px rgba(0, 0, 0, 0.06), inset 0px -3px 0px #3F8AE0';
-    }, [numberOf]); */
-
     useEffect(() => {
         if(products !== undefined) {
             let quantity = 0;
@@ -70,27 +65,31 @@ const Product:React.FC<productProps> = ({product, detailsId, setDetailsId, setIs
     };
 
     const onClickMaxHandler = () => {
-        const p = new Promise((resolve, reject) => {
-            dispatch(addProduct({
-                myId: myId,
-                id: product.id,
-                name: product.name,
-                price: product.price,
-                quantity: 1,
-                image: product.image,
-                ingredients: [],
-            }));
-            resolve(true);
-            reject(false);
-        });
-        setNumberOf(prev => prev + 1);
-        p.then((data) => {
-            if(data) {
-                setMyId(prev => prev + 1);
-            }
-        }).then(() => {
-            if(product.hasIngredients === true) navigate(`/details/${product.id}/${myId}`);
-        });
+        if(!product.hasIngredients){
+            const p = new Promise((resolve, reject) => {
+                dispatch(addProduct({
+                    myId: myId,
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    quantity: 1,
+                    image: product.image,
+                    ingredients: [],
+                }));
+                resolve(true);
+                reject(false);
+            });
+            setNumberOf(prev => prev + 1);
+            p.then((data) => {
+                if(data) {
+                    setMyId(prev => prev + 1);
+                }
+            })
+        } else {
+            setDetailsId(parseInt(product.id));
+            setIsDetails(true);
+            setIsOpacity(true);
+        }
     };
 
     return (
@@ -116,29 +115,7 @@ const Product:React.FC<productProps> = ({product, detailsId, setDetailsId, setIs
                 <p className='product__weight'>{numberOf > 0 ? <><span className='product__price'>{price}₽</span> {product.weight && `/ ${product.weight} гр `} </> : (product.weight && `${product.weight} гр`)}</p>
                 {numberOf === 0 
                     ? <button 
-                        onClick={() => {
-                            const p1 = new Promise((resolve, reject) => {
-                                dispatch(addProduct({
-                                    myId: myId,
-                                    id: product.id,
-                                    name: product.name,
-                                    price: product.price,
-                                    quantity: 1,
-                                    image: product.image,
-                                    ingredients: [],
-                                }));
-                                resolve(true);
-                                reject(false);
-                            });
-                            p1.then((data) => {
-                                if(data) {
-                                    setMyId(prev => prev + 1);
-                                }
-                            }).then(() => {
-                                if(product.hasIngredients === true) navigate(`/details/${product.id}/${myId}`);
-                            }) 
-                            setNumberOf(1);
-                        }}
+                        onClick={() => onClickMaxHandler()}
                         className='product__btn'
                     >{product.price}₽</button>
                     : <MinMaxBtns numberOf={numberOf} onClickMax={onClickMaxHandler} onClickMin={onClickMinHandler} />

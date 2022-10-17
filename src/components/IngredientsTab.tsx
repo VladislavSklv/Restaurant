@@ -9,10 +9,11 @@ interface ingredientTabProps{
     ingredients: IIngredient[];
     isChecbox: boolean;
     setChosenIngredients: React.Dispatch<React.SetStateAction<ChosenIngredientI[]>>
+    isValidation?: boolean;
 }
 
-const IngredientsTab:React.FC<ingredientTabProps> = ({groupName, ingredients, isChecbox, setChosenIngredients}) => {
-    const [isActive, setIsAvtive] = useState(false);
+const IngredientsTab:React.FC<ingredientTabProps> = ({groupName, ingredients, isChecbox, setChosenIngredients, isValidation}) => {
+    const [isActive, setIsActive] = useState(false);
 
     const onRadioClickHandler = ({id, inputName, name, price}: ChosenIngredientI) => {
         setChosenIngredients(prev => {
@@ -33,10 +34,10 @@ const IngredientsTab:React.FC<ingredientTabProps> = ({groupName, ingredients, is
     };
 
     return (
-        <div className={isActive ? 'product-id__group active-tab' : 'product-id__group'}>
+        <div className={isValidation ? (isActive ? 'product-id__group active-tab validated' : 'product-id__group validated') : (isActive ? 'product-id__group active-tab' : 'product-id__group')}>
             <div 
                 className='product-id__group-title'
-                onClick={() => setIsAvtive(prev => !prev)}
+                onClick={() => setIsActive(prev => !prev)}
             >{groupName}</div>
             <div className='product-id__ingredinets'>
                 {ingredients.map(ingredient => (

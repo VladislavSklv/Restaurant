@@ -1,5 +1,7 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { useGetProductDetailsQuery } from '../API/vendorAPI';
+import { useAppDispatch } from '../hooks/hooks';
+import { addProduct } from '../redux/productSlice';
 import ErrorBlock from './ErrorBlock';
 import IngredientsTab from './IngredientsTab';
 import Loader from './Loader';
@@ -21,15 +23,33 @@ export interface ChosenIngredientI{
     price: number;
 }
 
-const ProductDetails:React.FC<productDetailsProps> = ({vendorId,isDetails ,detailsId, setDetailsId, setIsDetails, setIsOpacity}) => {
+const ProductDetails:React.FC<productDetailsProps> = ({vendorId, isDetails, detailsId, setDetailsId, setIsDetails, setIsOpacity}) => {
     const {isLoading, isError, data: details} = useGetProductDetailsQuery({productId: detailsId.toString(), vendorId});
     const [numberOf, setNumberOf] = useState(1);
     const [chosenIngredients, setChosenIngredients] = useState<ChosenIngredientI[]>([]);
+    const [isAllIngredients, setIsAllIngredients] = useState(false);
+    const [isValidation, setIsValidation] = useState(false);
     const [touchStart, setTouchStart] = useState(0);
     const [touchMove, setTouchMove] = useState(0);
     const [fullOpen, setFullOpen] = useState(false);
 
+    const dispatch = useAppDispatch();
 
+    /* Reset details modal */
+    useEffect(() => {
+        setNumberOf(1);
+        setChosenIngredients([]);
+    }, [isDetails]);
+
+    /* Checking if all needed ingredients are chosen */
+    useEffect(() => {
+        let neededIngredients = chosenIngredients.filter(ingredient => ingredient.inputName !== ingredient.name);
+        if(details !== undefined && neededIngredients.length === details.ingredientGroups.length){
+            setIsAllIngredients(true);
+        };
+    }, [chosenIngredients]);
+
+    /* Handlers */
     const onClickMinHandler = () => {
         if(numberOf > 1 && details !== undefined) {
             setNumberOf(prev => prev - 1);
@@ -48,6 +68,12 @@ const ProductDetails:React.FC<productDetailsProps> = ({vendorId,isDetails ,detai
         }
     };
 
+    const close = () => {
+        setIsDetails(false);
+        setIsOpacity(false);
+        setFullOpen(false);
+    };
+
     return (
         <>
             {isLoading && <Loader/>}
@@ -59,6 +85,22 @@ const ProductDetails:React.FC<productDetailsProps> = ({vendorId,isDetails ,detai
                     <div className='product-id__weight'>{details.weight} гр</div>
                 </div>
                 <h1 className='product-id__title'>{details.name}</h1>
+                <button
+                    onClick={() => {
+                        if(isAllIngredients){
+                            dispatch(addProduct({
+                                myId: Date.now(),
+                                id: details.id,
+                                image: details.image,
+                                ingredients: chosenIngredients,
+                                name: details.name,
+                                price: details.price,
+                                quantity: numberOf
+                            }));
+                            close();
+                        } else setIsValidation(true);
+                    }}
+                >Add</button>
                 <p className='product-id__descr'>{details.description}</p>
                 <div className='product-id__value'>
                     Энергитическая ценность в 100 гр. 
@@ -73,17 +115,17 @@ const ProductDetails:React.FC<productDetailsProps> = ({vendorId,isDetails ,detai
                     {details.ingredientGroups.length > 0 && 
                         <>
                             {details.ingredientGroups.map(group => 
-                                <IngredientsTab key={group.id} setChosenIngredients={setChosenIngredients} groupName={group.name} ingredients={group.ingredients} isChecbox={false} />
+                                <IngredientsTab isValidation={isValidation} key={group.id} setChosenIngredients={setChosenIngredients} groupName={group.name} ingredients={group.ingredients} isChecbox={false} />
                             )}
                         </>}
                     {details.ingredients.length > 0 && 
                         <IngredientsTab key={'optional'} setChosenIngredients={setChosenIngredients} groupName='Дополнительно' ingredients={details.ingredients} isChecbox={true}/>
                     }
                 </form>
-                <div className='product-id__number'>
+                {isDetails && <div className='product-id__number'>
                     <h2 className='title'>Количество:</h2>
                     <MinMaxBtns numberOf={numberOf} onClickMin={onClickMinHandler} onClickMax={onClickMaxHandler} />
-                </div>
+                </div>}
                 <div 
                     className='product-id__line'
                     onTouchStart={(e) => {
@@ -109,10 +151,7 @@ const ProductDetails:React.FC<productDetailsProps> = ({vendorId,isDetails ,detai
                 ><span></span></div>
                 <div 
                     className='cross'
-                    onClick={() => {
-                        setIsDetails(false);
-                        setIsOpacity(false);
-                    }}
+                    onClick={close}
                 ><span></span><span></span></div>
             </div>}
         </>
