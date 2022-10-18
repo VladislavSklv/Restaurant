@@ -1,10 +1,13 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import { useGetProductDetailsQuery } from '../API/vendorAPI';
 import { useAppDispatch } from '../hooks/hooks';
 import { addProduct } from '../redux/productSlice';
+import DragLine from './DragLine';
 import ErrorBlock from './ErrorBlock';
+import IngredientsForm from './IngredientsForm';
 import IngredientsTab from './IngredientsTab';
 import Loader from './Loader';
+import Message from './Message';
 import MinMaxBtns from './UI/MinMaxBtns';
 
 interface productDetailsProps {
@@ -29,9 +32,9 @@ const ProductDetails:React.FC<productDetailsProps> = ({vendorId, isDetails, deta
     const [chosenIngredients, setChosenIngredients] = useState<ChosenIngredientI[]>([]);
     const [isAllIngredients, setIsAllIngredients] = useState(false);
     const [isValidation, setIsValidation] = useState(false);
-    const [touchStart, setTouchStart] = useState(0);
-    const [touchMove, setTouchMove] = useState(0);
+    const [isMessage, setIsMessage] = useState(false);
     const [fullOpen, setFullOpen] = useState(false);
+    const formRef = useRef<HTMLFormElement>(null);
 
     const dispatch = useAppDispatch();
 
@@ -39,6 +42,9 @@ const ProductDetails:React.FC<productDetailsProps> = ({vendorId, isDetails, deta
     useEffect(() => {
         setNumberOf(1);
         setChosenIngredients([]);
+        setIsValidation(false);
+        setIsMessage(false);
+        formRef.current?.reset();
     }, [isDetails]);
 
     /* Checking if all needed ingredients are chosen */
@@ -46,7 +52,9 @@ const ProductDetails:React.FC<productDetailsProps> = ({vendorId, isDetails, deta
         let neededIngredients = chosenIngredients.filter(ingredient => ingredient.inputName !== ingredient.name);
         if(details !== undefined && neededIngredients.length === details.ingredientGroups.length){
             setIsAllIngredients(true);
-        };
+        } else {
+            setIsAllIngredients(false);
+        }
     }, [chosenIngredients]);
 
     /* Handlers */
@@ -84,7 +92,7 @@ const ProductDetails:React.FC<productDetailsProps> = ({vendorId, isDetails, deta
                     <img src={details.image || '../images/food.svg'} alt={details.name} />
                     <div className='product-id__weight'>{details.weight} гр</div>
                 </div>
-                <h1 className='product-id__title'>{details.name}</h1>
+                <h2 className='product-id__title'>{details.name}</h2>
                 <button
                     onClick={() => {
                         if(isAllIngredients){
@@ -98,7 +106,10 @@ const ProductDetails:React.FC<productDetailsProps> = ({vendorId, isDetails, deta
                                 quantity: numberOf
                             }));
                             close();
-                        } else setIsValidation(true);
+                        } else {
+                            setIsValidation(true);
+                            setIsMessage(true);
+                        };
                     }}
                 >Add</button>
                 <p className='product-id__descr'>{details.description}</p>
@@ -111,48 +122,17 @@ const ProductDetails:React.FC<productDetailsProps> = ({vendorId, isDetails, deta
                         <div className="product-id__info">ккал<span>345</span></div>
                     </div>
                 </div>
-                <form className='product-id__form'>
-                    {details.ingredientGroups.length > 0 && 
-                        <>
-                            {details.ingredientGroups.map(group => 
-                                <IngredientsTab isValidation={isValidation} key={group.id} setChosenIngredients={setChosenIngredients} groupName={group.name} ingredients={group.ingredients} isChecbox={false} />
-                            )}
-                        </>}
-                    {details.ingredients.length > 0 && 
-                        <IngredientsTab key={'optional'} setChosenIngredients={setChosenIngredients} groupName='Дополнительно' ingredients={details.ingredients} isChecbox={true}/>
-                    }
-                </form>
+                <IngredientsForm formRef={formRef} details={details} isDetails={isDetails} isValidation={isValidation} setChosenIngredients={setChosenIngredients}/>
                 {isDetails && <div className='product-id__number'>
                     <h2 className='title'>Количество:</h2>
                     <MinMaxBtns numberOf={numberOf} onClickMin={onClickMinHandler} onClickMax={onClickMaxHandler} />
                 </div>}
-                <div 
-                    className='product-id__line'
-                    onTouchStart={(e) => {
-                        setTouchStart(e.touches[0].screenY);
-                    }}
-                    onTouchMove={(e) => {
-                        setTouchMove(e.touches[0].screenY);
-                    }}
-                    onTouchEnd={() => {
-                        if(!fullOpen){
-                            if(touchMove < touchStart) {
-                                setFullOpen(true);
-                            } else if(touchMove > touchStart) {
-                                setIsDetails(false);
-                                setIsOpacity(false);
-                            }
-                        } else {
-                            setFullOpen(false);
-                        }
-                        setTouchMove(0);
-                        setTouchStart(0);
-                    }} 
-                ><span></span></div>
+                <DragLine close={close} fullOpen={fullOpen} setFullOpen={setFullOpen} />
                 <div 
                     className='cross'
                     onClick={close}
                 ><span></span><span></span></div>
+                <Message isError={true} isActive={isMessage} setIsActive={setIsMessage}/>
             </div>}
         </>
     );

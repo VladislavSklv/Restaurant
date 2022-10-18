@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import { IProductsTab } from '../API/vendorAPI';
 
 export interface modalNavBarProps {
-    productsTabsNames: productsTabs[];
+    productsTabs: IProductsTab[];
     setIsOpacity: React.Dispatch<React.SetStateAction<boolean>>;
     setIsModal: React.Dispatch<React.SetStateAction<boolean>>;
     isModal: boolean;
@@ -14,13 +15,13 @@ export interface productsTabs {
 	id: string;
 }
 
-const ModalNavBar: React.FC<modalNavBarProps> = ({productsTabsNames, setIsModal, setIsOpacity, isModal, activeTab, setActiveTab}) => {
+const ModalNavBar: React.FC<modalNavBarProps> = ({productsTabs, setIsModal, setIsOpacity, isModal, activeTab, setActiveTab}) => {
     const [touchStart, setTouchStart] = useState(0);
     const [touchMove, setTouchMove] = useState(0);
     const [fullOpen, setFullOpen] = useState(false);
 
     return (
-        <div style={isModal ? {'bottom': '0'} : {'bottom': '-100%'} } className={fullOpen ? 'modal modal_full' : 'modal'}>
+        <div style={isModal ? {'bottom': '0'} : {'bottom': '-100%'} } className={fullOpen ? 'modal-navbar modal-navbar_full' : 'modal-navbar'}>
             <div 
             onTouchStart={(e) => {
                 setTouchStart(e.touches[0].screenY);
@@ -42,20 +43,13 @@ const ModalNavBar: React.FC<modalNavBarProps> = ({productsTabsNames, setIsModal,
                 setTouchMove(0);
                 setTouchStart(0);
             }} 
-            className='modal__title'>
-                {/* <div 
-                    className='cross' 
-                    onClick={() => {
-                        setIsModal(false);
-                        setIsOpacity(false);
-                    }}
-                ><span></span><span></span></div>  */}
+            className='modal-navbar__title'>
             Меню</div>
-            <div className='modal__scroll'>
-                <div className='modal__hrefs'>
-                    {productsTabsNames.map((productTab, i) => (
+            <div className='modal-navbar__scroll'>
+                <div className='modal-navbar__hrefs'>
+                    {productsTabs.map((productTab, i) => (
                         <a 
-                            className={activeTab == productTab.id ? 'modal__href active' : 'modal__href'}
+                            className={activeTab == productTab.id ? 'modal-navbar__href active' : 'modal-navbar__href'}
                             onClick={() => {
                                 setIsModal(false);
                                 setIsOpacity(false);
@@ -63,7 +57,7 @@ const ModalNavBar: React.FC<modalNavBarProps> = ({productsTabsNames, setIsModal,
                             }} 
                             href={`#${productTab.id}`} 
                             key={productTab.id}
-                        >{productTab.name}</a>
+                        >{productTab.name} <span>{productTab.products.length}</span></a>
                     ))}
                 </div>
             </div>

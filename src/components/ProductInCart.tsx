@@ -45,7 +45,7 @@ const ProductInCart:React.FC<prodcutInCartProps> = ({product}) => {
                 {product.ingredients.length > 0 && 
                     <p className='cart-item__ingredients'>
                         {product.ingredients.length > 0 && product.ingredients.map((ingredient, i) => (
-                            <span key={ingredient.id + i + Date.now()}>
+                            <span key={i + JSON.stringify(product)}>
                                 {i === 0 ? `${ingredient.name} `: `/ ${ingredient.name} `}
                             </span>
                         ))}
