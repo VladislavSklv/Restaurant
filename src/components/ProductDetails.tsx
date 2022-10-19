@@ -5,7 +5,6 @@ import { addProduct } from '../redux/productSlice';
 import DragLine from './DragLine';
 import ErrorBlock from './ErrorBlock';
 import IngredientsForm from './IngredientsForm';
-import IngredientsTab from './IngredientsTab';
 import Loader from './Loader';
 import Message from './Message';
 import MinMaxBtns from './UI/MinMaxBtns';
@@ -15,7 +14,6 @@ interface productDetailsProps {
     isDetails: boolean;
     setIsDetails: React.Dispatch<React.SetStateAction<boolean>>;
     detailsId: number;
-    setDetailsId: React.Dispatch<React.SetStateAction<number>>;
     setIsOpacity: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -26,7 +24,7 @@ export interface ChosenIngredientI{
     price: number;
 }
 
-const ProductDetails:React.FC<productDetailsProps> = ({vendorId, isDetails, detailsId, setDetailsId, setIsDetails, setIsOpacity}) => {
+const ProductDetails:React.FC<productDetailsProps> = ({vendorId, isDetails, detailsId, setIsDetails, setIsOpacity}) => {
     const {isLoading, isError, data: details} = useGetProductDetailsQuery({productId: detailsId.toString(), vendorId});
     const [numberOf, setNumberOf] = useState(1);
     const [chosenIngredients, setChosenIngredients] = useState<ChosenIngredientI[]>([]);

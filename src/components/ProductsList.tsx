@@ -6,12 +6,13 @@ interface productListProps {
     productsTabs: IProductsTab[];
     setActiveTab: React.Dispatch<React.SetStateAction<string>>;
     setIsDetails: React.Dispatch<React.SetStateAction<boolean>>;
-    detailsId: number;
     setDetailsId: React.Dispatch<React.SetStateAction<number>>;
-    setIsOpacity: React.Dispatch<React.SetStateAction<boolean>>
+    setIsOpacity: React.Dispatch<React.SetStateAction<boolean>>;
+    myId: number;
+    setMyId: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const ProductsList:React.FC<productListProps> = ({productsTabs, setActiveTab, detailsId, setDetailsId, setIsDetails, setIsOpacity}) => {
+const ProductsList:React.FC<productListProps> = ({productsTabs, setActiveTab, setDetailsId, setIsDetails, setIsOpacity, myId, setMyId}) => {
     return (
         <>
             {productsTabs !== undefined && productsTabs.map(productsTab => (
@@ -26,7 +27,7 @@ const ProductsList:React.FC<productListProps> = ({productsTabs, setActiveTab, de
                     <div className='title'>{productsTab.name}</div>
                     <div className='menu__wrapper'>
                         {productsTab.products.map(product => (
-                            <Product key={product.id} setIsOpacity={setIsOpacity} detailsId={detailsId} setDetailsId={setDetailsId} setIsDetails={setIsDetails} product={product} />
+                            <Product myId={myId} setMyId={setMyId} key={product.id} setIsOpacity={setIsOpacity} setDetailsId={setDetailsId} setIsDetails={setIsDetails} product={product} />
                         ))}
                     </div>
                 </div>

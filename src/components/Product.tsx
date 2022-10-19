@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { IProduct } from '../API/vendorAPI';
 import { useAppDispatch, useAppSelector } from '../hooks/hooks';
 import { addProduct, decrementQuantity, removeProduct } from '../redux/productSlice';
@@ -8,21 +7,21 @@ import MinMaxBtns from './UI/MinMaxBtns';
 interface productProps {
     product: IProduct;
     setIsDetails: React.Dispatch<React.SetStateAction<boolean>>;
-    detailsId: number;
     setDetailsId: React.Dispatch<React.SetStateAction<number>>;
     setIsOpacity: React.Dispatch<React.SetStateAction<boolean>>;
+    myId: number;
+    setMyId: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const Product:React.FC<productProps> = ({product, detailsId, setDetailsId, setIsDetails, setIsOpacity}) => {
+const Product:React.FC<productProps> = ({product, setDetailsId, setIsDetails, setIsOpacity, myId, setMyId}) => {
     const [numberOf, setNumberOf] = useState(0);
     const [price, setPrice] = useState(0);
     const productRef = useRef<HTMLDivElement | any>();
-    const navigate = useNavigate();
-    const [myId, setMyId] = useState(1);
 
     const dispatch = useAppDispatch();
     const {products} = useAppSelector(state => state.product);
 
+    /* counting full product price */
     useEffect(() => {
         if(products !== undefined) {
             let quantity = 0;
@@ -51,13 +50,19 @@ const Product:React.FC<productProps> = ({product, detailsId, setDetailsId, setIs
         };
     }, [products]);
 
+    /* Handlers */
     const onClickMinHandler = () => {
         setNumberOf(prev => prev - 1);
         let checker = true;
-        for (let j = 0; j < products.length; j++) {
-            if(products[j].id === product.id && products[j].quantity > 1) {
-                dispatch(decrementQuantity({id: products[j].id, myId: products[j].myId}));
+        let products1 = [...products];
+        let reverseProducts = products1.reverse();
+        for (let j = 0; j < reverseProducts.length; j++) {
+            if(reverseProducts[j].id === product.id && reverseProducts[j].quantity > 1) {
+                dispatch(decrementQuantity({id: reverseProducts[j].id, myId: reverseProducts[j].myId}));
                 checker = false;
+                break;
+            }
+            if(reverseProducts[j].id === product.id){
                 break;
             }
         };

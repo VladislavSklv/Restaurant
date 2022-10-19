@@ -17,11 +17,13 @@ const IngredientsTab:React.FC<ingredientTabProps> = ({groupName, ingredients, is
     const [isActive, setIsActive] = useState(false);
     const [isChosen, setIsChosen] = useState(false);
 
+    /* Set component to default state */
     useEffect(() => {
         setIsActive(false);
         setIsChosen(false);
     }, [isDetails]);
 
+    /* Handlers */
     const onRadioClickHandler = ({id, inputName, name, price}: ChosenIngredientI) => {
         setChosenIngredients(prev => {
             let ingredients = prev.filter(ingr => ingr.inputName !== inputName);

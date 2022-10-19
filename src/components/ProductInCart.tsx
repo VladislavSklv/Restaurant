@@ -11,18 +11,21 @@ const ProductInCart:React.FC<prodcutInCartProps> = ({product}) => {
     const [numberOf, setNumberOf] = useState(product.quantity);
     const [ingredientsPrice, setIngredientsPrice] = useState(0);
 
+    /* Counting ingredients price */
     useEffect(() => {
         product.ingredients.forEach(ingredient => {
             setIngredientsPrice(prev => prev += ingredient.price);
         });
     },  []);
 
+    /* Checking number of products if main products array will change */
     useEffect(() => {
         setNumberOf(product.quantity);
     }, [product]);
 
     const dispatch = useAppDispatch();
 
+    /* Handlers */
     const onClickMinHandler = () => {
         if(numberOf === 1) {
             dispatch(removeProduct({id: product.id, myId: product.myId}));

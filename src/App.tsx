@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {  useGetProductsMenuQuery } from './API/vendorAPI';
 import ErrorBlock from './components/ErrorBlock';
 import Loader from './components/Loader';
 import { useAppSelector } from './hooks/hooks';
 import CartPage from './pages/CartPage';
 import MainMenuPage from './pages/MainMenuPage';
-import ProductDetailsPage from './pages/ProductDetailsPage';
 import { IfinalProduct } from './redux/productSlice';
 
 function App() {
@@ -38,7 +37,7 @@ function App() {
 	return (
 		<BrowserRouter>
 			<Routes>
-				{products !== undefined && <Route path='/' element={<MainMenuPage vendorId={productProps.vendorId} totalPrice={totalPrice} setTotalPrice={setTotalPrice} productsTabs={products} />} />}
+				{products !== undefined && <Route path='/' element={<MainMenuPage vendorId={productProps.vendorId} productsTabs={products} />} />}
 				{isLoading && <Route path='/' element={<Loader/>} />}
 				{isError && <Route path='/' element={<ErrorBlock/>} />}
 				<Route path='/cart' element={<CartPage totalPrice={totalPrice} vendorId={productProps.vendorId} />}/>
