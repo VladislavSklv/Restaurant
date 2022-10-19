@@ -13,7 +13,7 @@
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "@types/react-slick": "^0.23.10",
-    "@types/telegram-web-app": "^6.2.1",
+    "@types/telegram-web-app": "^6.2.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.2",

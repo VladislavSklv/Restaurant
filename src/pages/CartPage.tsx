@@ -36,7 +36,7 @@ const CartPage: React.FC<cartPageProps> = ({vendorId, totalPrice}) => {
         products: [],
     };
 
-    window.Telegram.WebApp.BackButton.onClick(() => navigate(-1));
+    /* window.Telegram.WebApp.BackButton.onClick(() => navigate(-1)); */
 
     const setBtnOrder = () => {
         /* https://etoolz.ru/api/v1/vendor/${vendorId}/order */
@@ -67,11 +67,17 @@ const CartPage: React.FC<cartPageProps> = ({vendorId, totalPrice}) => {
                         setIsOpacity(true);
                     }}
                 >continue</button>
-                <h1 className='title title_cart'>Корзина</h1>
+                <h1 
+                    className='title title_cart'
+                >Корзина</h1>
                 <div
                     onClick={() => {
-                        dispatch(clearProducts());
-                        navigate('/');
+                        Telegram.WebApp.showConfirm('Очистить корзину', (ok) => {
+                            if(ok){
+                                dispatch(clearProducts());
+                                navigate('/'); 
+                            }
+                        })
                     }}
                 ><img src="../../images/trash.svg" alt="cart"/></div>
             </div>

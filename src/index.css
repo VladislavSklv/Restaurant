@@ -286,7 +286,7 @@ code {
 .modal{
 	position: fixed;
 	width: 100%;
-	height: calc(100% - 58vh);
+	height: 340px;
 	background: #fff;
 	border-radius: 20px 20px 0px 0px;
 	bottom: -100%;
