@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { vendorApi } from './API/vendorAPI';
 import productSlice from './redux/productSlice';
@@ -20,13 +21,13 @@ const store = configureStore({
 	reducer: rootReducer,
 });
 
-window.Telegram.WebApp.BackButton.show();
-window.Telegram.WebApp.BackButton.onClick(() => window.history.back());
 window.Telegram.WebApp.expand();
 
 root.render(
 	<Provider store={store}>
-		<App/>
+		<BrowserRouter>
+			<App/>
+		</BrowserRouter>
 	</Provider>
 );
 

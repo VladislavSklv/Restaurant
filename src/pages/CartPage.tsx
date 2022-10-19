@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IOrder } from '../API/vendorAPI';
 import Modal from '../components/Modal';
@@ -11,13 +11,17 @@ import { clearProducts } from '../redux/productSlice';
 interface cartPageProps{
     vendorId: number;
     totalPrice: number;
+    isModal1: boolean;
+    setIsModal1: React.Dispatch<React.SetStateAction<boolean>>;
+    isModal2: boolean;
+    setIsModal2: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const CartPage: React.FC<cartPageProps> = ({vendorId, totalPrice}) => {
+const CartPage: React.FC<cartPageProps> = ({vendorId, totalPrice, isModal1, isModal2, setIsModal1, setIsModal2}) => {
     const [placeNumber, setPlaceNumber] = useState('');
     const [numberOfPeople, setNumberOfPeople] = useState('');
-    const [isModal1, setIsModal1] = useState(false);
-    const [isModal2, setIsModal2] = useState(false);
+    /* const [isModal1, setIsModal1] = useState(false);
+    const [isModal2, setIsModal2] = useState(false); */
     const [isOpacity, setIsOpacity] = useState(false);
     const [isValidated, setIsValidated] = useState(false);
     const [isPaymentChosen, setIsPaymentChosen] = useState(false);
@@ -27,6 +31,14 @@ const CartPage: React.FC<cartPageProps> = ({vendorId, totalPrice}) => {
     const dispatch = useAppDispatch();
 
     const navigate = useNavigate();
+    
+    useEffect(() => {
+        if(isModal1 === false && isModal2 === false){
+            setIsOpacity(false);
+        } else if(isModal1 === true || isModal2 === true) {
+            setIsOpacity(true);
+        }
+    }, [isModal1, isModal2]);
 
     /* Final order object */
     let order: IOrder = {
@@ -36,7 +48,7 @@ const CartPage: React.FC<cartPageProps> = ({vendorId, totalPrice}) => {
         products: [],
     };
 
-    /* window.Telegram.WebApp.BackButton.onClick(() => navigate(-1)); */
+    /* Telegram.WebApp.BackButton.onClick(() => navigate('/')); */
 
     const setBtnOrder = () => {
         /* https://etoolz.ru/api/v1/vendor/${vendorId}/order */

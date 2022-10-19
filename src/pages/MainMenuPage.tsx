@@ -9,9 +9,10 @@ import ProductsList from '../components/ProductsList';
 interface mainMenuPageProps {
     productsTabs: IProductsTab[];
     vendorId: number;
+    totalPrice: number;
 }
 
-const MainMenuPage:React.FC<mainMenuPageProps> = ({productsTabs, vendorId}) => {
+const MainMenuPage:React.FC<mainMenuPageProps> = ({productsTabs, vendorId, totalPrice}) => {
     const [isOpacity, setIsOpacity] = useState(false);
     const [isModal, setIsModal] = useState(false);
     const [isDetails, setIsDetails] = useState(false);
