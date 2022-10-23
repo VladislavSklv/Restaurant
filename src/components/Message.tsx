@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 interface messageProps {
     isError: boolean;
@@ -7,6 +7,10 @@ interface messageProps {
 }
 
 const Message:React.FC<messageProps> = ({isError, isActive, setIsActive}) => {
+    useEffect(() => {
+        if(isActive) setTimeout(() => setIsActive(false), 3000);
+    }, [isActive]);
+    
     return (
         <div 
             className={isError ? (isActive ? 'message message_e message_active' : 'message message_e') : (isActive ? 'message message_r message_active' : 'message message_r')}

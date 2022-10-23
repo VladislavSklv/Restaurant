@@ -1,4 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useGetProductDetailsQuery } from '../API/vendorAPI';
 import { useAppDispatch } from '../hooks/hooks';
 import { addProduct } from '../redux/productSlice';
@@ -8,6 +9,7 @@ import IngredientsForm from './IngredientsForm';
 import Loader from './Loader';
 import Message from './Message';
 import MinMaxBtns from './UI/MinMaxBtns';
+import { useSwipeable } from 'react-swipeable';
 
 interface productDetailsProps {
     vendorId: number;
@@ -15,6 +17,8 @@ interface productDetailsProps {
     setIsDetails: React.Dispatch<React.SetStateAction<boolean>>;
     detailsId: number;
     setIsOpacity: React.Dispatch<React.SetStateAction<boolean>>;
+    isCart: boolean;
+    setIsCart: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface ChosenIngredientI{
@@ -24,25 +28,43 @@ export interface ChosenIngredientI{
     price: number;
 }
 
-const ProductDetails:React.FC<productDetailsProps> = ({vendorId, isDetails, detailsId, setIsDetails, setIsOpacity}) => {
+const ProductDetails:React.FC<productDetailsProps> = ({vendorId, isDetails, detailsId, setIsDetails, setIsOpacity, isCart, setIsCart}) => {
     const {isLoading, isError, data: details} = useGetProductDetailsQuery({productId: detailsId.toString(), vendorId});
     const [numberOf, setNumberOf] = useState(1);
+    const [fullPrice, setFullPrice] = useState(0);
     const [chosenIngredients, setChosenIngredients] = useState<ChosenIngredientI[]>([]);
     const [isAllIngredients, setIsAllIngredients] = useState(false);
     const [isValidation, setIsValidation] = useState(false);
     const [isMessage, setIsMessage] = useState(false);
-    const [fullOpen, setFullOpen] = useState(false);
+    const [isScrolledTop, setIsScrolledTop] = useState(true);
+    const [isSwiped, setIsSwiped] = useState(false);
+    const detailsPageRef = useRef<HTMLDivElement>(null);
     const formRef = useRef<HTMLFormElement>(null);
 
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+
+    /* Counting full price */
+    useEffect(() => {
+        if(details !== undefined){
+            let allIngredientsPrices = 0;
+            chosenIngredients.forEach(ingredient => {
+                allIngredientsPrices += ingredient.price;
+            });
+
+            setFullPrice((details.price + allIngredientsPrices) * numberOf);
+        }
+    }, [numberOf, chosenIngredients, details]);
 
     /* Reset details modal */
     useEffect(() => {
-        setNumberOf(1);
-        setChosenIngredients([]);
-        setIsValidation(false);
-        setIsMessage(false);
-        formRef.current?.reset();
+        if(!isDetails){
+            setNumberOf(1);
+            setChosenIngredients([]);
+            setIsValidation(false);
+            setIsMessage(false);
+            formRef.current?.reset();
+        }
     }, [isDetails]);
 
     /* Checking if all needed ingredients are chosen */
@@ -53,15 +75,15 @@ const ProductDetails:React.FC<productDetailsProps> = ({vendorId, isDetails, deta
         } else {
             setIsAllIngredients(false);
         }
-    }, [chosenIngredients]);
+    }, [chosenIngredients, isDetails, details]);
 
     /* Handlers */
     const onClickMinHandler = () => {
-        if(numberOf > 1 && details !== undefined) {
+        if(numberOf > 2 && details !== undefined) {
             setNumberOf(prev => prev - 1);
         };
-        if(numberOf === 1 && details !== undefined){
-            setNumberOf(0);
+        if(numberOf === 2 && details !== undefined){
+            setNumberOf(1);
         }
     };
 
@@ -74,42 +96,109 @@ const ProductDetails:React.FC<productDetailsProps> = ({vendorId, isDetails, deta
         }
     };
 
+    /* Swipe Handlers */
+    const handlers = useSwipeable({
+        onSwiping: (e) => {
+            if(isScrolledTop && e.dir === "Down"){
+                setIsSwiped(true);
+                if(isSwiped){
+                    setIsDetails(false);
+                    setIsOpacity(false);
+                }
+            }
+        }
+    })
+
     const close = () => {
         setIsDetails(false);
         setIsOpacity(false);
-        setFullOpen(false);
     };
+
+    /* Setting telegram main button */
+    useEffect(() => {
+        if(isDetails){
+            if(!window.Telegram.WebApp.MainButton.isVisible && fullPrice !== 0)  window.Telegram.WebApp.MainButton.show();
+            if(fullPrice !== 0 && (isAllIngredients || !details?.hasIngredients)) window.Telegram.WebApp.MainButton.text = `Добавить в корзину ${fullPrice}₽`;
+            else if(fullPrice !== 0) window.Telegram.WebApp.MainButton.text = `Выберите опции ${fullPrice}₽`;
+        }
+    }, [isDetails, fullPrice, isAllIngredients]);
+
+	const mainBtn = () => {
+		if(isDetails === false){
+			setIsCart(true);
+			navigate('/cart');
+		} else {
+            if(isAllIngredients && details !== undefined){
+                dispatch(addProduct({
+                    myId: Date.now(),
+                    id: details.id,
+                    image: details.image,
+                    ingredients: chosenIngredients,
+                    name: details.name,
+                    price: details.price,
+                    quantity: numberOf
+                }));
+                close();
+            } else {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+                setIsValidation(true);
+                setIsMessage(true);
+                if(formRef.current !== undefined && formRef.current !== null){
+                    if(formRef.current !== undefined && formRef.current !== null && detailsPageRef.current !== null){
+                        const childNodesArray = Object.values(formRef.current.childNodes) as HTMLElement[];
+                        let checker = true;
+                        for(let j = 0; j < childNodesArray.length; j++){
+                            if(childNodesArray[j].classList.contains('validated')){
+                                detailsPageRef.current?.scrollBy(0, childNodesArray[j].getBoundingClientRect().y - 15);
+                                checker = false;
+                                break;
+                            }
+                        }
+                        if(checker) detailsPageRef.current?.scrollBy(0, childNodesArray[0].getBoundingClientRect().y - 15);
+                    }
+                }
+            };
+        }
+	};
+
+    useEffect(() => {
+        if(isCart === false) {
+            window.Telegram.WebApp.onEvent('mainButtonClicked', mainBtn);
+            return () => {
+                window.Telegram.WebApp.offEvent('mainButtonClicked', mainBtn);
+            };
+        }
+	}, [mainBtn, isCart, chosenIngredients, numberOf, isAllIngredients, details, isValidation]);
+
+    /* Haptic feedback */
+    useEffect(() => {
+        if(isDetails) window.Telegram.WebApp.HapticFeedback.selectionChanged();
+    }, [numberOf, chosenIngredients]);
 
     return (
         <>
             {isLoading && <Loader/>}
             {isError && <ErrorBlock/>}
             {details !== undefined && 
-            <div style={isDetails ? {'bottom': '0'} : {'bottom': '-100%'}} className={fullOpen ? 'product-id product-id__full' : 'product-id'}>
+            <div 
+                {...handlers} style={isDetails ? {'bottom': '0'} : {'bottom': '-100%'}} 
+                className='product-id'
+                ref={detailsPageRef}
+                onScroll={(e: any) => {
+                    if(e.target.scrollTop === 0) {
+                        setIsScrolledTop(true);
+                    }
+                    else {
+                        setIsScrolledTop(false);
+                        setIsSwiped(false);
+                    };
+                }}
+            >
                 <div className='product-id__img'>
                     <img src={details.image || '../images/food.svg'} alt={details.name} />
-                    <div className='product-id__weight'>{details.weight} гр</div>
+                    {details.weight && <div className='product-id__weight'>{details.weight} гр</div>}
                 </div>
-                <h2 className='product-id__title'>{details.name}</h2>
-                <button
-                    onClick={() => {
-                        if(isAllIngredients){
-                            dispatch(addProduct({
-                                myId: Date.now(),
-                                id: details.id,
-                                image: details.image,
-                                ingredients: chosenIngredients,
-                                name: details.name,
-                                price: details.price,
-                                quantity: numberOf
-                            }));
-                            close();
-                        } else {
-                            setIsValidation(true);
-                            setIsMessage(true);
-                        };
-                    }}
-                >Add</button>
+                <h2 onClick={() => setIsMessage(true)} className='product-id__title'>{details.name}</h2>
                 <p className='product-id__descr'>{details.description}</p>
                 <div className='product-id__value'>
                     Энергитическая ценность в 100 гр. 
@@ -125,7 +214,7 @@ const ProductDetails:React.FC<productDetailsProps> = ({vendorId, isDetails, deta
                     <h2 className='title'>Количество:</h2>
                     <MinMaxBtns numberOf={numberOf} onClickMin={onClickMinHandler} onClickMax={onClickMaxHandler} />
                 </div>}
-                <DragLine close={close} fullOpen={fullOpen} setFullOpen={setFullOpen} />
+                <DragLine />
                 <div 
                     className='cross'
                     onClick={close}

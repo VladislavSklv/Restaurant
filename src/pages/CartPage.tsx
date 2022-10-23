@@ -11,17 +11,15 @@ import { clearProducts } from '../redux/productSlice';
 interface cartPageProps{
     vendorId: number;
     totalPrice: number;
-    isModal1: boolean;
-    setIsModal1: React.Dispatch<React.SetStateAction<boolean>>;
-    isModal2: boolean;
-    setIsModal2: React.Dispatch<React.SetStateAction<boolean>>;
+    isCart: boolean;
+    setIsCart: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const CartPage: React.FC<cartPageProps> = ({vendorId, totalPrice, isModal1, isModal2, setIsModal1, setIsModal2}) => {
+const CartPage: React.FC<cartPageProps> = ({vendorId, totalPrice, isCart, setIsCart}) => {
     const [placeNumber, setPlaceNumber] = useState('');
     const [numberOfPeople, setNumberOfPeople] = useState('');
-    /* const [isModal1, setIsModal1] = useState(false);
-    const [isModal2, setIsModal2] = useState(false); */
+    const [isModal1, setIsModal1] = useState(false);
+    const [isModal2, setIsModal2] = useState(false);
     const [isOpacity, setIsOpacity] = useState(false);
     const [isValidated, setIsValidated] = useState(false);
     const [isPaymentChosen, setIsPaymentChosen] = useState(false);
@@ -48,18 +46,6 @@ const CartPage: React.FC<cartPageProps> = ({vendorId, totalPrice, isModal1, isMo
         products: [],
     };
 
-    /* Telegram.WebApp.BackButton.onClick(() => navigate('/')); */
-
-    const setBtnOrder = () => {
-        /* https://etoolz.ru/api/v1/vendor/${vendorId}/order */
-        window.Telegram.WebApp.onEvent('mainButtonClicked', () => {
-            fetch(`https://etoolz.ru/api/v1/vendor/${vendorId}/order`,{
-                body: JSON.stringify(order),
-                method: 'POST'
-            })
-        });
-    };
-
     /* function witch close modals */
     const close = () => {
         setIsOpacity(false); 
@@ -70,23 +56,73 @@ const CartPage: React.FC<cartPageProps> = ({vendorId, totalPrice, isModal1, isMo
         formsRef.current?.reset();
     }
 
+    /* Setting telegram main button */
+    useEffect(() => {
+        if(isCart && products.length > 0){
+            if(!window.Telegram.WebApp.MainButton.isVisible) window.Telegram.WebApp.MainButton.show();
+            window.Telegram.WebApp.MainButton.text = `Продолжить`;
+        } else if (isCart) {
+            window.Telegram.WebApp.MainButton.hide();
+            setIsCart(false);
+            navigate('/');
+        }
+    }, [isCart, products]);
+
+    const mainBtn = () => {
+        if(!isModal1 && !isModal2){
+            setIsModal1(true);
+            setIsOpacity(true);
+        } else if(isModal1 && !isModal2) {
+            if(placeNumber.split(/\s+/).join('') === '' || numberOfPeople.split(/\s+/).join('') === ''){
+                setIsValidated(true);
+            } else {
+                setIsModal1(false);
+                setIsValidated(false);
+                setIsModal2(true);
+            }
+        } else if(isModal2 && !isModal1){
+            if(!isPaymentChosen){
+                setIsValidated(true);
+            } else {
+                setIsValidated(false);
+                setIsModal2(false);
+                setIsOpacity(false);
+                setIsPaymentChosen(false);
+                window.Telegram.WebApp.MainButton.hide();
+                window.Telegram.WebApp.showPopup({message: 'Спасибо за покупку'});
+                setTimeout(() => {
+                    window.Telegram.WebApp.close();
+                }, 1500);
+                fetch(`https://etoolz.ru/api/v1/vendor/${vendorId}/order`, {
+                    body: JSON.stringify(order),
+                    method: 'POST'
+                });
+            } 
+        }
+    };
+
+    useEffect(() => {
+        if(isCart === true) {
+            window.Telegram.WebApp.onEvent('mainButtonClicked', mainBtn);
+            return () => {
+                window.Telegram.WebApp.offEvent('mainButtonClicked', mainBtn);
+            };
+        }
+	}, [isCart, mainBtn]);
+
     return (
         <div className='cart'>
             <div className='cart__title-with-icon'>
-                <button
-                    onClick={() => {
-                        setIsModal1(true);
-                        setIsOpacity(true);
-                    }}
-                >continue</button>
                 <h1 
                     className='title title_cart'
                 >Корзина</h1>
                 <div
                     onClick={() => {
-                        Telegram.WebApp.showConfirm('Очистить корзину', (ok) => {
+                        window.Telegram.WebApp.HapticFeedback.notificationOccurred('warning');
+                        window.Telegram.WebApp.showConfirm('Очистить корзину', (ok) => {
                             if(ok){
                                 dispatch(clearProducts());
+                                setIsCart(false);
                                 navigate('/'); 
                             }
                         })
@@ -110,20 +146,9 @@ const CartPage: React.FC<cartPageProps> = ({vendorId, totalPrice, isModal1, isMo
                         <MyInput inputValue={placeNumber} setInputValue={setPlaceNumber} isValidated={isValidated} type='number' id='place-number' placeholder='Номер стола' errorText='Выберите номер стола'/>
                         <MyInput inputValue={numberOfPeople} setInputValue={setNumberOfPeople} isValidated={isValidated} type='number' id='people-number' placeholder='Количество гостей' errorText='Выберите количество гостей'/>
                     </form>
-                    <button
-                        onClick={() => {
-                            if(placeNumber.split(/\s+/).join('') === '' || numberOfPeople.split(/\s+/).join('') === ''){
-                                setIsValidated(true);
-                            } else {
-                                setIsModal1(false);
-                                setIsValidated(false);
-                                setIsModal2(true);
-                            }
-                        }}
-                    >Continue</button>
                 </>
             } />
-            <Modal close={close} isModal={isModal2} title='Способ оплаты' children={<PayMethodList formsRef={formsRef} isRadioChecked={isPaymentChosen} setIsRadioChecked={setIsPaymentChosen} setIsModal2={setIsModal2} setIsOpacity={setIsOpacity} setIsValidated={setIsValidated} />} />
+            <Modal close={close} isModal={isModal2} title='Способ оплаты' children={<PayMethodList formsRef={formsRef} setIsRadioChecked={setIsPaymentChosen} />} />
         </div>
     );
 };

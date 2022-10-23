@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import { useSwipeable } from 'react-swipeable';
 import DragLine from './DragLine';
 
 interface cartModalProps {
@@ -10,16 +11,24 @@ interface cartModalProps {
 }
 
 const Modal:React.FC<cartModalProps> = ({children, text, title, isModal, close}) => {
-    const [fullOpen, setFullOpen] = useState(false);
+    const [isScrolledTop, setIsScrolledTop] = useState(true);
+    const [isSwiped, setIsSwiped] = useState(false);
 
-    /* Set modal to default open type */
-    useEffect(() => {
-        setFullOpen(false);
-    }, [isModal])
+    /* Swipe Handlers */
+    const handlers = useSwipeable({
+        onSwiping: (e) => {
+            if(isScrolledTop && e.dir === "Down"){
+                setIsSwiped(true);
+                if(isSwiped){
+                    close();
+                }
+            }
+        }
+    })
 
     return (
-        <div style={isModal ? {'bottom': '0'} : {'bottom': '-100%'} } className={fullOpen ? 'modal modal_full' : 'modal'}>
-            <DragLine fullOpen={fullOpen} setFullOpen={setFullOpen} close={close} />
+        <div style={isModal ? {'bottom': '0'} : {'bottom': '-100%'} } className='modal'>
+            <DragLine />
             <h3 className='modal__title'>{title}</h3>
             <h4 className='modal__text'>{text}</h4>
             {children}

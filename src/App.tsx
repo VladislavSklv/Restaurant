@@ -13,8 +13,6 @@ function App() {
 	const {data: products, isLoading, isError} = useGetProductsMenuQuery(productProps);
 	const [totalPrice, setTotalPrice] = useState(0);
 	const [isCart, setIsCart] = useState(false);
-	const [isCartModal1, setIsCartModal1] = useState(false);
-    const [isCartModal2, setIsCartModal2] = useState(false);
 
 	const {products: finalProducts} = useAppSelector(state => state.product);
 	const navigate = useNavigate();
@@ -40,41 +38,12 @@ function App() {
 	}, [finalProducts]);
 
 	/* Setting telegram main button */
-	const mainBtn = () => {
-		if(isCart === false){
-			setIsCart(true);
-			navigate('/cart');
-		} else {
-			if(isCartModal1 === false && isCartModal2 === false){
-				setIsCartModal1(true);
-			} else if(isCartModal1 === true) {
-				setIsCartModal1(false);
-				setIsCartModal2(true);
-			} else if(isCartModal2 === true){
-				setIsCartModal1(false);
-				setIsCartModal2(false);
-			}
-		}
-	};
-
-	
 	window.Telegram.WebApp.MainButton.color = '#FF6900'
 	window.Telegram.WebApp.MainButton.textColor = '#FFFFFF';
-	window.Telegram.WebApp.MainButton.show();
-
-	useEffect(() => {
-		if(totalPrice === 0) Telegram.WebApp.MainButton.hide();
-		window.Telegram.WebApp.MainButton.text = `Перейти в корзину ${totalPrice}`;
-    }, [totalPrice]);
-
-	useEffect(() => {
-		window.Telegram.WebApp.onEvent('mainButtonClicked', mainBtn);
-		return () => {
-			window.Telegram.WebApp.offEvent('mainButtonClicked', mainBtn);
-		};
-	}, [mainBtn]);
 
 	/* Setting Telegram Back Button */
+	window.Telegram.WebApp.enableClosingConfirmation();
+	
 	const backBtn = () => {
 		if(isCart){
 			navigate('/');
@@ -84,7 +53,11 @@ function App() {
 		}
 	};
 
-	window.Telegram.WebApp.BackButton.show();
+	useEffect(() => {
+		if(isCart) window.Telegram.WebApp.BackButton.show();
+		else window.Telegram.WebApp.BackButton.hide();
+	}, [isCart]);
+
 	useEffect(() => {
 		window.Telegram.WebApp.onEvent('backButtonClicked', backBtn);
 		return () => {
@@ -92,12 +65,17 @@ function App() {
 		};
 	}, [backBtn]);
 
+	/* Haptic feedback */
+	useEffect(() => {
+		window.Telegram.WebApp.HapticFeedback.selectionChanged();
+	}, [finalProducts]);
+
 	return (
 		<Routes>
-			{products !== undefined && <Route path='/' element={<MainMenuPage totalPrice={totalPrice} vendorId={productProps.vendorId} productsTabs={products} />} />}
+			{products !== undefined && <Route path='/' element={<MainMenuPage isCart={isCart} setIsCart={setIsCart} totalPrice={totalPrice} vendorId={productProps.vendorId} productsTabs={products} />} />}
 			{isLoading && <Route path='/' element={<Loader/>} />}
 			{isError && <Route path='/' element={<ErrorBlock/>} />}
-			<Route path='/cart' element={<CartPage isModal1={isCartModal1} isModal2={isCartModal2} setIsModal1={setIsCartModal1} setIsModal2={setIsCartModal2} totalPrice={totalPrice} vendorId={productProps.vendorId} />}/>
+			<Route path='/cart' element={<CartPage isCart={isCart} setIsCart={setIsCart} totalPrice={totalPrice} vendorId={productProps.vendorId} />}/>
 		</Routes>
 	);
 }

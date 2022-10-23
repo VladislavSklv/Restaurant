@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useEffect, useRef, createRef} from 'react';
 import { productsTabs } from './ModalNavBar';
-
+import { CapsuleTabs } from 'antd-mobile';
 export interface navBarProps {
     productsTabsNames: productsTabs[];
     isHamburger: boolean;
@@ -11,6 +11,40 @@ export interface navBarProps {
 }
 
 const NavBar:React.FC<navBarProps> = ({productsTabsNames, setIsModal, setIsOpacity, isHamburger, activeTab, setActiveTab}) => {
+    const tabRef = createRef<HTMLDivElement>();
+
+    useEffect(() => {
+        tabRef.current?.childNodes.forEach((tab: any) => {
+            if(tab.classList.contains('active')) {
+                tab.scrollIntoView({block: "end", inline: "nearest"});
+            }
+        });
+    }, [activeTab]);
+
+    /* 
+    <a 
+        href={`#${productTab.id}`} 
+        key={productTab.id}
+        className={activeTab == productTab.id ? 'navbar__href active' : 'navbar__href'} 
+        onClick={() => {
+            if(setActiveTab) setActiveTab(productTab.id);
+        }}
+    >{productTab.name}</a>
+    */
+
+
+    /* 
+    <a
+        href={`#${productTab.id}`} 
+        key={productTab.id}
+        onClick={() => {
+            if(setActiveTab) setActiveTab(productTab.id);
+        }}
+        >
+        <CapsuleTabs.Tab key={productTab.id} title={productTab.name}/>
+    </a>
+*/
+
     return (
         <div className='navbar'>
             {isHamburger && setIsOpacity && setIsModal &&
@@ -26,12 +60,12 @@ const NavBar:React.FC<navBarProps> = ({productsTabsNames, setIsModal, setIsOpaci
                     <span className='hamburger__block'></span>
                 </div>
             }
-            <div className='navbar__wrapper'>
+            <div ref={tabRef} className='navbar__wrapper'>
                 {productsTabsNames.map(productTab => (
                     <a 
                         href={`#${productTab.id}`} 
-                        className={activeTab == productTab.id ? 'navbar__href active' : 'navbar__href'} 
                         key={productTab.id}
+                        className={activeTab == productTab.id ? 'navbar__href active' : 'navbar__href'} 
                         onClick={() => {
                             if(setActiveTab) setActiveTab(productTab.id);
                         }}

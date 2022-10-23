@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
+import { useSwipeable } from 'react-swipeable';
 import { IProductsTab } from '../API/vendorAPI';
 
 export interface modalNavBarProps {
@@ -16,35 +17,38 @@ export interface productsTabs {
 }
 
 const ModalNavBar: React.FC<modalNavBarProps> = ({productsTabs, setIsModal, setIsOpacity, isModal, activeTab, setActiveTab}) => {
-    const [touchStart, setTouchStart] = useState(0);
-    const [touchMove, setTouchMove] = useState(0);
-    const [fullOpen, setFullOpen] = useState(false);
+    const [isScrolledTop, setIsScrolledTop] = useState(true);
+    const [isSwiped, setIsSwiped] = useState(false);
+
+    /* Swipe Handlers */
+    const handlers = useSwipeable({
+        onSwiping: (e) =>{
+            if(isScrolledTop && e.dir === "Down"){
+                setIsSwiped(true);
+                if(isSwiped){
+                    setIsModal(false);
+                    setIsOpacity(false);
+                }
+            }
+        }
+    })
 
     return (
-        <div style={isModal ? {'bottom': '0'} : {'bottom': '-100%'} } className={fullOpen ? 'modal-navbar modal-navbar_full' : 'modal-navbar'}>
-            <div 
-            onTouchStart={(e) => {
-                setTouchStart(e.touches[0].screenY);
-            }}
-            onTouchMove={(e) => {
-                setTouchMove(e.touches[0].screenY);
-            }}
-            onTouchEnd={() => {
-                if(!fullOpen){
-                    if(touchMove < touchStart) {
-                        setFullOpen(true);
-                    } else if(touchMove > touchStart) {
-                        setIsModal(false);
-                        setIsOpacity(false);
-                    }
-                } else {
-                    setFullOpen(false);
+        <div 
+            {...handlers} 
+            style={isModal ? {'bottom': '0'} : {'bottom': '-100%'} } 
+            className='modal-navbar'
+            onScroll={(e: any) => {
+                if(e.target.scrollTop === 0) {
+                    setIsScrolledTop(true);
                 }
-                setTouchMove(0);
-                setTouchStart(0);
-            }} 
-            className='modal-navbar__title'>
-            Меню</div>
+                else {
+                    setIsScrolledTop(false);
+                    setIsSwiped(false);
+                };
+            }}
+        >
+            <div className='modal-navbar__title'>Меню</div>
             <div className='modal-navbar__scroll'>
                 <div className='modal-navbar__hrefs'>
                     {productsTabs.map((productTab, i) => (
