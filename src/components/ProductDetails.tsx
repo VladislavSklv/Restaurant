@@ -29,7 +29,7 @@ export interface ChosenIngredientI{
 }
 
 const ProductDetails:React.FC<productDetailsProps> = ({vendorId, isDetails, detailsId, setIsDetails, setIsOpacity, isCart, setIsCart}) => {
-    const {isLoading, isError, data: details} = useGetProductDetailsQuery({productId: detailsId.toString(), vendorId});
+    const {isLoading, isError, data: details} = useGetProductDetailsQuery({productId: detailsId.toString(), vendorId: vendorId.toString()});
     const [numberOf, setNumberOf] = useState(1);
     const [fullPrice, setFullPrice] = useState(0);
     const [chosenIngredients, setChosenIngredients] = useState<ChosenIngredientI[]>([]);
@@ -198,7 +198,7 @@ const ProductDetails:React.FC<productDetailsProps> = ({vendorId, isDetails, deta
                     <img src={details.image || '../images/food.svg'} alt={details.name} />
                     {details.weight && <div className='product-id__weight'>{details.weight} гр</div>}
                 </div>
-                <h2 onClick={() => setIsMessage(true)} className='product-id__title'>{details.name}</h2>
+                <h2 className='product-id__title'>{details.name}</h2>
                 <p className='product-id__descr'>{details.description}</p>
                 <div className='product-id__value'>
                     Энергитическая ценность в 100 гр. 

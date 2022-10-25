@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from '../hooks/hooks';
 import { clearProducts } from '../redux/productSlice';
 
 interface cartPageProps{
-    vendorId: number;
+    vendorId: string;
     totalPrice: number;
     isCart: boolean;
     setIsCart: React.Dispatch<React.SetStateAction<boolean>>;

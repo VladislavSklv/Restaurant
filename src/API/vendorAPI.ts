@@ -17,7 +17,7 @@ export interface IProductsTab {
 }
 
 export interface ProductMenuProps{
-    vendorId: number;
+    vendorId: string;
 }
 
 export interface IIngredient {
@@ -45,7 +45,7 @@ export interface IProductDetails {
 }
 
 export interface ProductDetailsProps{
-    vendorId: number;
+    vendorId: string;
     productId: string;
 }
 
@@ -59,7 +59,7 @@ export interface IOrderProduct {
 
 export interface IOrder {
     user_id: number,
-    vendor_id: number,
+    vendor_id: string,
     place: number,
     products: IOrderProduct[]
 }

@@ -117,7 +117,10 @@ const Product:React.FC<productProps> = ({product, setDetailsId, setIsDetails, se
                     }}
                     className='product__name'
                 >{product.name}</h2>
-                <p className='product__weight'>{numberOf > 0 ? <><span className='product__price'>{price}₽</span> {product.weight && `/ ${product.weight} гр `} </> : (product.weight && `${product.weight} гр`)}</p>
+                <p className='product__weight'>
+                    <span style={numberOf === 0 ? {opacity: 1, pointerEvents: 'all', transitionDelay: '150ms', transform: 'translateX(0)'} : {opacity: 0, pointerEvents: 'none', transitionDelay: '0ms', transform: 'translateX(100%)'}} className='product__noprice'>{product.weight && `${product.weight} гр `}</span>
+                    <span style={numberOf === 0 ? {opacity: 0, pointerEvents: 'none', transitionDelay: '0ms'} : {opacity: 1, pointerEvents: 'all', transitionDelay: '150ms'}} className='product__price'>{price}₽ {product.weight && `/ ${product.weight} гр `}</span>
+                </p>
                 {numberOf === 0 
                     ? <button 
                         onClick={() => onClickMaxHandler()}

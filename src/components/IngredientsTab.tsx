@@ -3,6 +3,7 @@ import { IIngredient } from '../API/vendorAPI';
 import { ChosenIngredientI } from './ProductDetails';
 import MyCheckbox from './UI/MyCheckbox';
 import MyRadio from './UI/MyRadio';
+import {Collapse} from 'react-collapse';
 
 interface ingredientTabProps{
     groupName: string;
@@ -49,15 +50,17 @@ const IngredientsTab:React.FC<ingredientTabProps> = ({groupName, ingredients, is
                 className='product-id__group-title'
                 onClick={() => setIsActive(prev => !prev)}
             >{groupName}</div>
-            <div className='product-id__ingredinets'>
-                {ingredients.map(ingredient => (
-                    <div key={ingredient.id} className='product-id__ingredient'>
-                        {isCheckbox 
-                        ? <MyCheckbox onClickHandler={onCheckboxClickHandler} id={ingredient.id.toString()} inputName={ingredient.name} label={ingredient.name} price={ingredient.price} /> 
-                        : <MyRadio onClickHandler={onRadioClickHandler} id={ingredient.id.toString()} inputName={groupName} label={ingredient.name} price={ingredient.price}/>}
-                    </div>
-                ))}
-            </div>
+            <Collapse isOpened={isActive}>
+                <div className='product-id__ingredinets'>
+                    {ingredients.map(ingredient => (
+                        <div key={ingredient.id} className='product-id__ingredient'>
+                            {isCheckbox 
+                            ? <MyCheckbox onClickHandler={onCheckboxClickHandler} id={ingredient.id.toString()} inputName={ingredient.name} label={ingredient.name} price={ingredient.price} /> 
+                            : <MyRadio onClickHandler={onRadioClickHandler} id={ingredient.id.toString()} inputName={groupName} label={ingredient.name} price={ingredient.price}/>}
+                        </div>
+                    ))}
+                </div> 
+            </Collapse>
         </div>
     );
 };
