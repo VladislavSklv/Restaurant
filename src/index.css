@@ -19,6 +19,7 @@ body {
 }
 
 html::-webkit-scrollbar {
+	-webkit-appearance: none;
 	width: 0;
 	height: 0;
 }
@@ -108,6 +109,7 @@ code {
 }
 
 .navbar__wrapper::-webkit-scrollbar {
+	-webkit-appearance: none;
 	width: 0;
 	height: 0;
 	scroll-behavior: smooth;
@@ -568,6 +570,7 @@ code {
 	line-height: 125%;
 	color: #818C99;
 	padding: 0 12px;
+	margin-bottom: 20px;
 }
 
 .product-id__number{
@@ -605,7 +608,7 @@ code {
 	line-height: 125%;
 	color: #292929;
 	padding-left: 12px;
-	margin: 20px 0;
+	margin-bottom: 20px;
 }
 
 .product-id__wrapper{

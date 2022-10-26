@@ -1,29 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { IProductsTab } from '../API/vendorAPI';
+import { mainArray } from '../API/vendorAPI';
 import ModalNavBar, { productsTabs } from '../components/ModalNavBar';
 import NavBar from '../components/NavBar';
 import ProductDetails from '../components/ProductDetails';
 import ProductsList from '../components/ProductsList';
 
 interface mainMenuPageProps {
-    productsTabs: IProductsTab[];
+    products: mainArray[];
     vendorId: number;
     totalPrice: number;
     isCart: boolean;
     setIsCart: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const MainMenuPage:React.FC<mainMenuPageProps> = ({productsTabs, vendorId, totalPrice, isCart, setIsCart}) => {
+const MainMenuPage:React.FC<mainMenuPageProps> = ({products, vendorId, totalPrice, isCart, setIsCart}) => {
     const [isOpacity, setIsOpacity] = useState(false);
     const [isModal, setIsModal] = useState(false);
     const [isDetails, setIsDetails] = useState(false);
-    const [detailsId, setDetailsId] = useState(parseInt(productsTabs[0].products[0].id));
-    const [activeTab, setActiveTab] = useState(productsTabs[0].id);
+    const [detailsId, setDetailsId] = useState(products[0].products[0].id.toString());
+    const [activeTab, setActiveTab] = useState(products[0].id.toString());
     const [myId, setMyId] = useState(1);
 
     let productsTabsNames: productsTabs[] = [];
-	productsTabs.map(productTab => {
-		productsTabsNames.push({name: productTab.name, id: productTab.id});
+	products.map(product => {
+		productsTabsNames.push({name: product.name, id: product.id.toString()});
 	});
 
     /* Setting telegram main button */
@@ -41,10 +41,10 @@ const MainMenuPage:React.FC<mainMenuPageProps> = ({productsTabs, vendorId, total
         <div>
             <NavBar activeTab={activeTab} setActiveTab={setActiveTab} setIsModal={setIsModal} setIsOpacity={setIsOpacity} productsTabsNames={productsTabsNames} isHamburger={true} ></NavBar>
             <div className='mainMenu'>
-                <ProductsList myId={myId} setMyId={setMyId} setIsOpacity={setIsOpacity} setDetailsId={setDetailsId} setIsDetails={setIsDetails} setActiveTab={setActiveTab} productsTabs={productsTabs}/>
+                <ProductsList myId={myId} setMyId={setMyId} setIsOpacity={setIsOpacity} setDetailsId={setDetailsId} setIsDetails={setIsDetails} setActiveTab={setActiveTab} productsTabs={products}/>
                 <div onClick={() => {setIsOpacity(false); setIsModal(false); setIsDetails(false)}} style={isOpacity ? {'opacity': '0.35', 'pointerEvents': 'all'} : {'opacity' : '0'}} className='opacity-block'></div>
-                <ProductDetails isCart={isCart} setIsCart={setIsCart} isDetails={isDetails} detailsId={detailsId} setIsDetails={setIsDetails} setIsOpacity={setIsOpacity} vendorId={vendorId} />
-                <ModalNavBar activeTab={activeTab} setActiveTab={setActiveTab} isModal={isModal} setIsModal={setIsModal} setIsOpacity={setIsOpacity} productsTabs={productsTabs}/>
+                <ProductDetails products={products} isCart={isCart} setIsCart={setIsCart} isDetails={isDetails} detailsId={parseInt(detailsId)} setIsDetails={setIsDetails} setIsOpacity={setIsOpacity} />
+                <ModalNavBar activeTab={activeTab} setActiveTab={setActiveTab} isModal={isModal} setIsModal={setIsModal} setIsOpacity={setIsOpacity} productsTabs={products}/>
             </div>
         </div>
     );

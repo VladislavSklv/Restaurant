@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import { useSwipeable } from 'react-swipeable';
-import { IProductsTab } from '../API/vendorAPI';
+import { mainArray } from '../API/vendorAPI';
 
 export interface modalNavBarProps {
-    productsTabs: IProductsTab[];
+    productsTabs: mainArray[];
     setIsOpacity: React.Dispatch<React.SetStateAction<boolean>>;
     setIsModal: React.Dispatch<React.SetStateAction<boolean>>;
     isModal: boolean;
@@ -53,11 +53,11 @@ const ModalNavBar: React.FC<modalNavBarProps> = ({productsTabs, setIsModal, setI
                 <div className='modal-navbar__hrefs'>
                     {productsTabs.map((productTab, i) => (
                         <a 
-                            className={activeTab == productTab.id ? 'modal-navbar__href active' : 'modal-navbar__href'}
+                            className={activeTab == productTab.id.toString() ? 'modal-navbar__href active' : 'modal-navbar__href'}
                             onClick={() => {
                                 setIsModal(false);
                                 setIsOpacity(false);
-                                if(setActiveTab) setActiveTab(productTab.id);
+                                if(setActiveTab) setActiveTab(productTab.id.toString());
                             }} 
                             href={`#${productTab.id}`} 
                             key={productTab.id}

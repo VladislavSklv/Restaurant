@@ -1,6 +1,42 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
 
+
+export interface IModifier {
+    id: number;
+    name: string;
+    price?: number;
+}
+
+export interface IModifierScheme {
+    id: number;
+    name: string;
+    minAmount: number;
+    maxAmount: number;
+    isRequired: boolean;
+    modifiers: IModifier[];
+}
+
 export interface IProduct {
+    id: number;
+    name: string;
+    description: string;
+    images: string[];
+    price: number;
+    weight: number;
+    energy: number;
+    fat: number;
+    proteins: number;
+    carbohydrates: number;
+    measure: string;
+    modifierScheme: IModifierScheme[];
+}
+
+export interface mainArray {
+    id: number;
+    name: string;
+    products: IProduct[];
+}
+/* export interface IProduct {
     id: string;
     description: string;
     image: string;
@@ -15,7 +51,7 @@ export interface IProductsTab {
     name: string;
     products: IProduct[];
 }
-
+ */
 export interface ProductMenuProps{
     vendorId: string;
 }
@@ -26,7 +62,7 @@ export interface IIngredient {
     price: number;
 }
 
-export interface IIngredientGroup {
+/* export interface IIngredientGroup {
     id: string;
     ingredients: IIngredient[];
     name: string;
@@ -47,7 +83,7 @@ export interface IProductDetails {
 export interface ProductDetailsProps{
     vendorId: string;
     productId: string;
-}
+} */
 
 export interface IOrderProduct {
     id: number,
@@ -67,15 +103,12 @@ export interface IOrder {
 
 export const vendorApi = createApi({
     reducerPath: 'vendorApi',
-    baseQuery: fetchBaseQuery({baseUrl: 'https://etoolz.ru/api/v1/vendor/'}),
+    baseQuery: fetchBaseQuery({baseUrl: 'https://etoolz.ru/api/v1/companies/'}),
     endpoints: (builder) => ({
-        getProductsMenu: builder.query<IProductsTab[], ProductMenuProps>({
+        getProductsMenu: builder.query<mainArray[], ProductMenuProps>({
             query: ({vendorId}) => `${vendorId}/menu/`,
-        }),
-        getProductDetails: builder.query<IProductDetails, ProductDetailsProps>({
-            query: ({vendorId, productId}) => `${vendorId}/product/${productId}/`,
-        }),
+        })
     }),
 });
 
-export const { useGetProductsMenuQuery, useGetProductDetailsQuery } = vendorApi;
+export const { useGetProductsMenuQuery } = vendorApi;

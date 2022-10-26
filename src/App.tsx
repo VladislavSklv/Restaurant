@@ -36,40 +36,14 @@ interface IMyMainObjects {
 }
 
 function App() {
-	const productProps = {vendorId:'81225'};
+	const productProps = {vendorId:'fabe396f-5dd5-435a-8559-48b2a44fb99f'};
 	const {data: products, isLoading, isError} = useGetProductsMenuQuery(productProps);
 	const [totalPrice, setTotalPrice] = useState(0);
 	const [isCart, setIsCart] = useState(false);
 
 	const {products: finalProducts} = useAppSelector(state => state.product);
 	const navigate = useNavigate();
-
-	/* let productsAndIngredients: IMyMainObjects = {ingredients: [], products: []};
-	useEffect(() => {
-		if(data !== undefined){
-			let products: IProductsGroup[] = [];
-			data.productCategories.forEach(productCategory => {
-				let productsInCategory: IProduct[] = [];
-				data.products.forEach(product => product.categoryId === productCategory.id && productsInCategory.push(product));
-				products.push({id: productCategory.id, name: productCategory.name, products: productsInCategory});
-			});
-
-			let ingredients: IIngredientsGroup[] = [];
-			data.modifierGroups.forEach(ingredientGroup => {
-				let ingredientsInCategory: IMyIngredient[] = []
-				data.modifierSchemes.forEach(ingredientScheme => {
-					let ingredientInSchrmr
-					data.modifiers.forEach(ingredient => {
-
-					});
-				});
-				ingredients.push({id: ingredientGroup.id, name: ingredientGroup.name, ingredients: ingredientsInCategory});
-			});
-
-			productsAndIngredients = {products, ingredients};
-		};
-	}, [data]); */
-
+	
 	/* Counting total price */
 	useEffect(() => {
 		if(finalProducts !== undefined && finalProducts.length > 0) {
@@ -126,7 +100,7 @@ function App() {
 
 	return (
 		<Routes>
-			{products !== undefined && <Route path='/' element={<MainMenuPage isCart={isCart} setIsCart={setIsCart} totalPrice={totalPrice} vendorId={parseInt(productProps.vendorId)} productsTabs={products} />} />}
+			{products !== undefined && <Route path='/' element={<MainMenuPage isCart={isCart} setIsCart={setIsCart} totalPrice={totalPrice} vendorId={parseInt(productProps.vendorId)} products={products} />} />}
 			{isLoading && <Route path='/' element={<Loader/>} />}
 			{isError && <Route path='/' element={<ErrorBlock/>} />}
 			<Route path='/cart' element={<CartPage isCart={isCart} setIsCart={setIsCart} totalPrice={totalPrice} vendorId={productProps.vendorId} />}/>

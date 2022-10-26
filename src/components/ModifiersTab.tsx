@@ -1,20 +1,20 @@
 import React, {useEffect, useState} from 'react';
-import { IIngredient } from '../API/vendorAPI';
 import { ChosenIngredientI } from './ProductDetails';
 import MyCheckbox from './UI/MyCheckbox';
 import MyRadio from './UI/MyRadio';
 import {Collapse} from 'react-collapse';
+import { IModifier } from '../API/vendorAPI';
 
 interface ingredientTabProps{
     groupName: string;
-    ingredients: IIngredient[];
+    modifiers: IModifier[];
     isCheckbox: boolean;
     isDetails: boolean;
     setChosenIngredients: React.Dispatch<React.SetStateAction<ChosenIngredientI[]>>
     isValidation?: boolean;
 }
 
-const IngredientsTab:React.FC<ingredientTabProps> = ({groupName, ingredients, isCheckbox, setChosenIngredients, isValidation, isDetails}) => {
+const ModifiersTab:React.FC<ingredientTabProps> = ({groupName, modifiers, isCheckbox, setChosenIngredients, isValidation, isDetails}) => {
     const [isActive, setIsActive] = useState(false);
     const [isChosen, setIsChosen] = useState(false);
 
@@ -52,11 +52,11 @@ const IngredientsTab:React.FC<ingredientTabProps> = ({groupName, ingredients, is
             >{groupName}</div>
             <Collapse isOpened={isActive}>
                 <div className='product-id__ingredinets'>
-                    {ingredients.map(ingredient => (
-                        <div key={ingredient.id} className='product-id__ingredient'>
+                    {modifiers.map(modifier => (
+                        <div key={modifier.id} className='product-id__ingredient'>
                             {isCheckbox 
-                            ? <MyCheckbox onClickHandler={onCheckboxClickHandler} id={ingredient.id.toString()} inputName={ingredient.name} label={ingredient.name} price={ingredient.price} /> 
-                            : <MyRadio onClickHandler={onRadioClickHandler} id={ingredient.id.toString()} inputName={groupName} label={ingredient.name} price={ingredient.price}/>}
+                            ? <MyCheckbox onClickHandler={onCheckboxClickHandler} id={modifier.id.toString()} forId={modifier.id.toString() + Date.now()} inputName={modifier.name} label={modifier.name} price={modifier.price === undefined ? 0 : modifier.price} /> 
+                            : <MyRadio onClickHandler={onRadioClickHandler} id={modifier.id.toString()} forId={modifier.id.toString() + Date.now()} inputName={groupName} label={modifier.name} price={modifier.price === undefined ? 0 : modifier.price}/>}
                         </div>
                     ))}
                 </div> 
@@ -65,4 +65,4 @@ const IngredientsTab:React.FC<ingredientTabProps> = ({groupName, ingredients, is
     );
 };
 
-export default IngredientsTab;
+export default ModifiersTab;
