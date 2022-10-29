@@ -8,6 +8,7 @@ export interface modalNavBarProps {
     setIsOpacity: React.Dispatch<React.SetStateAction<boolean>>;
     setIsModal: React.Dispatch<React.SetStateAction<boolean>>;
     isModal: boolean;
+    mainMenuRef: React.RefObject<HTMLDivElement>;
     activeTab?: string;
     setActiveTab?: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -17,7 +18,7 @@ export interface productsTabs {
 	id: string;
 }
 
-const ModalNavBar: React.FC<modalNavBarProps> = ({productsTabs, setIsModal, setIsOpacity, isModal, activeTab, setActiveTab}) => {
+const ModalNavBar: React.FC<modalNavBarProps> = ({productsTabs, setIsModal, setIsOpacity, isModal, activeTab, mainMenuRef}) => {
     const [isScrolledTop, setIsScrolledTop] = useState(true);
     const [isSwiped, setIsSwiped] = useState(true);
 
@@ -55,13 +56,19 @@ const ModalNavBar: React.FC<modalNavBarProps> = ({productsTabs, setIsModal, setI
                 <div className='modal-navbar__hrefs'>
                     {productsTabs.map((productTab, i) => (
                         <a 
+                            data-href={productTab.id}
                             className={activeTab == productTab.id.toString() ? 'modal-navbar__href active' : 'modal-navbar__href'}
-                            onClick={() => {
+                            onClick={(e: any) => {
                                 setIsModal(false);
                                 setIsOpacity(false);
-                                if(setActiveTab) setActiveTab(productTab.id.toString());
+                                if(mainMenuRef.current !== null) {
+                                    mainMenuRef.current.childNodes.forEach((div: any) => {
+                                        if(div.id && div.id === e.target.dataset.href){
+                                            window.scrollBy(0, div.getBoundingClientRect().top);
+                                        }
+                                    })
+                                }
                             }} 
-                            href={`#${productTab.id}`} 
                             key={productTab.id}
                         >{productTab.name} <span>{productTab.products.length}</span></a>
                     ))}

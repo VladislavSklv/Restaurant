@@ -36,7 +36,6 @@ const MainMenuPage:React.FC<mainMenuPageProps> = ({products, vendorId, totalPric
                 let bottom = productList.getBoundingClientRect().bottom;
                 if(productList.classList.contains('pt-54px') && ((top > window.innerHeight - 170 && top < window.innerHeight - 100) || (bottom > window.innerHeight - 95 && bottom < window.innerHeight - 25))) {
                     setActiveTab(productList.id.toString());
-                    console.log(productList, ' : ', bottom)
                 }
             })
         }
@@ -70,7 +69,7 @@ const MainMenuPage:React.FC<mainMenuPageProps> = ({products, vendorId, totalPric
                 <ProductsList myId={myId} setMyId={setMyId} setIsOpacity={setIsOpacity} setDetailsId={setDetailsId} setIsDetails={setIsDetails} setActiveTab={setActiveTab} productsTabs={products}/>
                 <div onClick={() => {setIsOpacity(false); setIsModal(false); setIsDetails(false)}} style={isOpacity ? {'opacity': '0.35', 'pointerEvents': 'all'} : {'opacity' : '0'}} className='opacity-block'></div>
                 <ProductDetails products={products} isCart={isCart} setIsCart={setIsCart} isDetails={isDetails} detailsId={parseInt(detailsId)} setIsDetails={setIsDetails} setIsOpacity={setIsOpacity} />
-                <ModalNavBar activeTab={activeTab} setActiveTab={setActiveTab} isModal={isModal} setIsModal={setIsModal} setIsOpacity={setIsOpacity} productsTabs={products}/>
+                <ModalNavBar mainMenuRef={mainMenuRef} activeTab={activeTab} setActiveTab={setActiveTab} isModal={isModal} setIsModal={setIsModal} setIsOpacity={setIsOpacity} productsTabs={products}/>
             </div>
         </div>
     );
