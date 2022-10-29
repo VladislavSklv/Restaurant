@@ -34,6 +34,7 @@ code {
 
 .mainMenu > .title{
 	margin: 16px 0;
+	overflow: auto;
 }
 
 .title{
@@ -55,36 +56,6 @@ code {
 	transform: translateX(12px);
 }
 
-.adm-capsule-tabs > .adm-capsule-tabs-header{
-	border: none;
-	padding: 0;
-}
-
-.adm-capsule-tabs-tab-list > .adm-capsule-tabs-tab-wrapper {
-	padding: 0;
-}
-
-.adm-capsule-tabs-tab-wrapper > .adm-capsule-tabs-tab{
-	height: auto;
-	font-style: normal;
-	font-weight: 400;
-	font-size: 14px;
-	line-height: 18px;
-	letter-spacing: 0.1px;
-	color: #292929;
-	background: #F2F3F5;
-	border-radius: 100px;
-	text-decoration: none;
-	margin-right: 8px;
-	padding: 4px 8px;
-	transition: all 0.2s;
-}
-
-.adm-capsule-tabs-tab-wrapper > .adm-capsule-tabs-tab-active{
-	background-color: #6D7885;
-	color: #fff;
-}
-
 .navbar{
 	position: fixed;
 	left: 0;
@@ -103,9 +74,10 @@ code {
 	justify-content: flex-start;
 	align-items: center;
 	overflow: auto;
-	/* appearance: none;
-	-webkit-appearance: none; */
+	appearance: none;
+	-webkit-appearance: none;
 	padding-bottom: 0;
+	/* scroll-behavior: smooth; */
 }
 
 .navbar__wrapper::-webkit-scrollbar {
@@ -136,6 +108,7 @@ code {
 	white-space: nowrap;
 	-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 	-webkit-tap-highlight-color: transparent;
+	scroll-behavior: smooth;
 }
 
 .active{
@@ -402,7 +375,7 @@ code {
 	color: #FF6900;
 	text-align: center;
 	letter-spacing: 0.154px;
-	transition: all 150ms;
+	transition: all 200ms;
 	cursor: pointer;
 }
 
@@ -424,6 +397,7 @@ code {
 	font-size: 16px;
 	line-height: 115%;
 	color: #292929;
+	transition: all 200ms;
 }
 
 .product__btn_min{
@@ -469,7 +443,7 @@ code {
 	left: 0;
 	overflow: auto;
 	background-color: #fff;
-	z-index: 6;
+	z-index: 4;
 	border-radius: 10px 10px 0 0;
 	transition: all 400ms;
 	margin-top: 8px;

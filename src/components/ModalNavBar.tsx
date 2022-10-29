@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { useSwipeable } from 'react-swipeable';
+import { disablePageScroll, enablePageScroll } from 'scroll-lock';
 import { mainArray } from '../API/vendorAPI';
 
 export interface modalNavBarProps {
@@ -18,12 +19,12 @@ export interface productsTabs {
 
 const ModalNavBar: React.FC<modalNavBarProps> = ({productsTabs, setIsModal, setIsOpacity, isModal, activeTab, setActiveTab}) => {
     const [isScrolledTop, setIsScrolledTop] = useState(true);
-    const [isSwiped, setIsSwiped] = useState(false);
+    const [isSwiped, setIsSwiped] = useState(true);
 
     /* Swipe Handlers */
     const handlers = useSwipeable({
-        onSwiping: (e) =>{
-            if(isScrolledTop && e.dir === "Down"){
+        onSwipedDown: () =>{
+            if(isScrolledTop){
                 setIsSwiped(true);
                 if(isSwiped){
                     setIsModal(false);
@@ -47,6 +48,7 @@ const ModalNavBar: React.FC<modalNavBarProps> = ({productsTabs, setIsModal, setI
                     setIsSwiped(false);
                 };
             }}
+            data-scroll-lock-scrollable
         >
             <div className='modal-navbar__title'>Меню</div>
             <div className='modal-navbar__scroll'>

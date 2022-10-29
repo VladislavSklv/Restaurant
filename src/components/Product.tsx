@@ -104,6 +104,7 @@ const Product:React.FC<productProps> = ({product, setDetailsId, setIsDetails, se
                     setIsDetails(true);
                     setDetailsId(product.id.toString());
                     setIsOpacity(true);
+
                 }}
                 className='product__img'
             ><img src={(product.images !== undefined && product.images[0] !== undefined) ? product.images[0] : '../images/food.svg'} alt={product.name} /></div>
@@ -120,13 +121,12 @@ const Product:React.FC<productProps> = ({product, setDetailsId, setIsDetails, se
                     <span style={numberOf === 0 ? {opacity: 1, pointerEvents: 'all', transitionDelay: '150ms', transform: 'translateX(0)'} : {opacity: 0, pointerEvents: 'none', transitionDelay: '0ms', transform: 'translateX(100%)'}} className='product__noprice'>{product.weight && `${product.weight} ${product.measure} `}</span>
                     <span style={numberOf === 0 ? {opacity: 0, pointerEvents: 'none', transitionDelay: '0ms'} : {opacity: 1, pointerEvents: 'all', transitionDelay: '150ms'}} className='product__price'>{price}₽ {product.weight && `/ ${product.weight} ${product.measure} `}</span>
                 </p>
-                {numberOf === 0 
-                    ? <button 
+                 <button 
+                        style={numberOf === 0 ? {opacity: 1, pointerEvents: 'all', transitionDelay: '150ms'} : {opacity: 0, pointerEvents: 'none', transitionDelay: '0ms'}}
                         onClick={() => onClickMaxHandler()}
                         className='product__btn'
                     >{product.price}₽</button>
-                    : <MinMaxBtns numberOf={numberOf} onClickMax={onClickMaxHandler} onClickMin={onClickMinHandler} />
-                }
+                <MinMaxBtns isAnim={true} numberOf={numberOf} onClickMax={onClickMaxHandler} onClickMin={onClickMinHandler} />
             </div>
         </div>
     );

@@ -36,7 +36,7 @@ const ProductDetails:React.FC<productDetailsProps> = ({products, isDetails, deta
     const [isValidation, setIsValidation] = useState(false);
     const [isMessage, setIsMessage] = useState(false);
     const [isScrolledTop, setIsScrolledTop] = useState(true);
-    const [isSwiped, setIsSwiped] = useState(false);
+    const [isSwiped, setIsSwiped] = useState(true);
     const detailsPageRef = useRef<HTMLDivElement>(null);
     const formRef = useRef<HTMLFormElement>(null);
 
@@ -75,6 +75,7 @@ const ProductDetails:React.FC<productDetailsProps> = ({products, isDetails, deta
             setIsValidation(false);
             setIsMessage(false);
             formRef.current?.reset();
+            detailsPageRef.current?.scrollTo(0, 0);
         }
     }, [isDetails]);
 
@@ -90,11 +91,6 @@ const ProductDetails:React.FC<productDetailsProps> = ({products, isDetails, deta
             setRequiredModifiers([]);
         }
     }, [details]);
-
-    useEffect(() => {
-        console.log(details);
-        console.log(requiredModifiers);
-    }, [requiredModifiers]);
 
     /* Checking if all needed ingredients are chosen */
     useEffect(() => {
@@ -127,8 +123,8 @@ const ProductDetails:React.FC<productDetailsProps> = ({products, isDetails, deta
 
     /* Swipe Handlers */
     const handlers = useSwipeable({
-        onSwiping: (e) => {
-            if(isScrolledTop && e.dir === "Down"){
+        onSwipedDown: () => {
+            if(isScrolledTop){
                 setIsSwiped(true);
                 if(isSwiped){
                     setIsDetails(false);
@@ -146,6 +142,9 @@ const ProductDetails:React.FC<productDetailsProps> = ({products, isDetails, deta
     /* Setting telegram main button */
     useEffect(() => {
         if(isDetails){
+            if(detailsPageRef.current !== null){
+                detailsPageRef.current.focus();
+            }
             if(!window.Telegram.WebApp.MainButton.isVisible && fullPrice !== 0)  window.Telegram.WebApp.MainButton.show();
             if(fullPrice !== 0 && (isAllModifiers || details?.modifierScheme === undefined || details?.modifierScheme.length === 0)) window.Telegram.WebApp.MainButton.text = `Добавить в корзину ${fullPrice}₽`;
             else if(fullPrice !== 0) window.Telegram.WebApp.MainButton.text = `Выберите опции ${fullPrice}₽`;
@@ -208,11 +207,12 @@ const ProductDetails:React.FC<productDetailsProps> = ({products, isDetails, deta
         <>
             {details !== undefined && detailsId &&
             <div 
-                {...handlers} style={isDetails ? {'bottom': '0'} : {'bottom': '-100%'}} 
+                data-scroll-lock-scrollable
+                style={isDetails ? {'bottom': '0'} : {'bottom': '-100%'}} 
                 className='product-id'
                 ref={detailsPageRef}
                 onScroll={(e: any) => {
-                    if(e.target.scrollTop === 0) {
+                    if(e.target.scrollTop < 1) {
                         setIsScrolledTop(true);
                     }
                     else {
@@ -221,12 +221,11 @@ const ProductDetails:React.FC<productDetailsProps> = ({products, isDetails, deta
                     };
                 }}
             >
-                <div className='product-id__img'>
+                <div {...handlers} className='product-id__img'>
                     <img src={(details.images !== undefined && details.images[0] !== undefined) ? details.images[0] : '../images/food.svg'} alt={details.name} />
                     {(details.weight && details.measure) && <div className='product-id__weight'>{details.weight} {details.measure}</div>}
                 </div>
                 <h2 className='product-id__title'>{details.name}</h2>
-                <button onClick={() => mainBtn()}>Main</button>
                 <p className='product-id__descr'>{details.description}</p>
                 {(details.carbohydrates || details.energy || details.fat || details.proteins) &&
                     <div className='product-id__value'>

@@ -43,7 +43,7 @@ function App() {
 
 	const {products: finalProducts} = useAppSelector(state => state.product);
 	const navigate = useNavigate();
-	
+
 	/* Counting total price */
 	useEffect(() => {
 		if(finalProducts !== undefined && finalProducts.length > 0) {

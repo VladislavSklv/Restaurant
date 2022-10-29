@@ -13,7 +13,7 @@ interface modifiersFormProps{
 
 const ModifiersForm:React.FC<modifiersFormProps> = ({details, isDetails, isValidation, setChosenModifiers, formRef}) => {
     const [requiredModifiers, setRequiredModifiers] = useState<IModifierScheme[]>([]);
-    const [optionalModifiers, setOptionalModifiers] = useState<IModifier[]>([]);
+    const [optionalModifiers, setOptionalModifiers] = useState<IModifierScheme[]>([]);
 
     /* Splitting modifiers */
     useEffect(() => {
@@ -22,16 +22,12 @@ const ModifiersForm:React.FC<modifiersFormProps> = ({details, isDetails, isValid
         if(details.modifierScheme !== undefined && details.modifierScheme.length > 0){
             let required: IModifierScheme[] = [];
             let optional: IModifierScheme[] = [];
-            let optionalModifiersOnly: IModifier[] = [];
             details.modifierScheme.forEach(modifierScheme => {
                 if(modifierScheme.isRequired) required.push(modifierScheme);
                 else optional.push(modifierScheme);
             });
             setRequiredModifiers(required);
-            optional.forEach(optionalModifierScheme => {
-                optionalModifiersOnly = [...optionalModifiersOnly, ...optionalModifierScheme.modifiers]
-            });
-            setOptionalModifiers(optionalModifiersOnly);
+            setOptionalModifiers(optional);
         }
     }, [details]);
 
@@ -44,7 +40,11 @@ const ModifiersForm:React.FC<modifiersFormProps> = ({details, isDetails, isValid
                     )}
                 </>}
             {(optionalModifiers !== undefined && optionalModifiers.length > 0) && 
-                <ModifiersTab key={'optional'} isDetails={isDetails} setChosenIngredients={setChosenModifiers} groupName='Дополнительно' modifiers={optionalModifiers} isCheckbox={true}/>
+                <>
+                    {optionalModifiers.map(modifierScheme =>
+                        <ModifiersTab key={modifierScheme.id} isDetails={isDetails} setChosenIngredients={setChosenModifiers} groupName={modifierScheme.name} modifiers={modifierScheme.modifiers} isCheckbox={true}/>
+                    )}
+                </>
             }
         </form>
     );
