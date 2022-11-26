@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes, useNavigate, useSearchParams } from 'react-router-dom';
 import {  IProduct, useGetProductsMenuQuery } from './API/vendorAPI';
 import ErrorBlock from './components/ErrorBlock';
 import Loader from './components/Loader';
@@ -36,7 +36,11 @@ interface IMyMainObjects {
 }
 
 function App() {
-	const productProps = {vendorId:'fabe396f-5dd5-435a-8559-48b2a44fb99f'};
+	const [searchParams, setSearchParams] = useSearchParams();
+	let companyId = searchParams.get('companyId');
+	if(companyId === null) companyId = '';
+
+	const productProps = {vendorId: companyId};
 	const {data: products, isLoading, isError} = useGetProductsMenuQuery(productProps);
 	const [totalPrice, setTotalPrice] = useState(0);
 	const [isCart, setIsCart] = useState(false);
@@ -73,7 +77,7 @@ function App() {
 	
 	const backBtn = () => {
 		if(isCart){
-			navigate('/');
+			navigate(`/?companyId=${productProps.vendorId}`);
 			setIsCart(false);
 		} else {
 			window.Telegram.WebApp.close();
@@ -100,7 +104,7 @@ function App() {
 
 	return (
 		<Routes>
-			{products !== undefined && <Route path='/' element={<MainMenuPage isCart={isCart} setIsCart={setIsCart} totalPrice={totalPrice} vendorId={parseInt(productProps.vendorId)} products={products} />} />}
+			{products !== undefined && <Route path='/' element={<MainMenuPage isCart={isCart} setIsCart={setIsCart} totalPrice={totalPrice} vendorId={productProps.vendorId} products={products} />} />}
 			{isLoading && <Route path='/' element={<Loader/>} />}
 			{isError && <Route path='/' element={<ErrorBlock/>} />}
 			<Route path='/cart' element={<CartPage isCart={isCart} setIsCart={setIsCart} totalPrice={totalPrice} vendorId={productProps.vendorId} />}/>

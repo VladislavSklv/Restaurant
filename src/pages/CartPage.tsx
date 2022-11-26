@@ -64,7 +64,7 @@ const CartPage: React.FC<cartPageProps> = ({vendorId, totalPrice, isCart, setIsC
         } else if (isCart) {
             window.Telegram.WebApp.MainButton.hide();
             setIsCart(false);
-            navigate('/');
+            navigate(`/?companyId=${vendorId}`);
         }
     }, [isCart, products]);
 
@@ -123,7 +123,7 @@ const CartPage: React.FC<cartPageProps> = ({vendorId, totalPrice, isCart, setIsC
                             if(ok){
                                 dispatch(clearProducts());
                                 setIsCart(false);
-                                navigate('/'); 
+                                navigate(`/?companyId=${vendorId}`); 
                             }
                         })
                     }}
