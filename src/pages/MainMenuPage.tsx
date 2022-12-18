@@ -54,13 +54,11 @@ const MainMenuPage:React.FC<mainMenuPageProps> = ({products, vendorId, totalPric
     /* Setting telegram main button */
     useEffect(() => {
 		if(!isDetails){
+            window.Telegram.WebApp.MainButton.text = `Перейти в корзину ${totalPrice}₽`;
             if(totalPrice === 0) Telegram.WebApp.MainButton.hide();
-		    window.Telegram.WebApp.MainButton.text = `Перейти в корзину ${totalPrice}₽`;
+            else if(!window.Telegram.WebApp.MainButton.isVisible && totalPrice !== 0) Telegram.WebApp.MainButton.show();
         };
     }, [totalPrice, isDetails]);
-
-    if(totalPrice === 0) Telegram.WebApp.MainButton.hide();
-    else Telegram.WebApp.MainButton.show();
 
     return (
         <div>

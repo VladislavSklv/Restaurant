@@ -8,6 +8,7 @@ import Message from './Message';
 import MinMaxBtns from './UI/MinMaxBtns';
 import { useSwipeable } from 'react-swipeable';
 import { IModifier, IModifierScheme, IProduct, mainArray } from '../API/vendorAPI';
+import { isConstructorDeclaration } from 'typescript';
 
 interface productDetailsProps {
     isDetails: boolean;
@@ -32,13 +33,14 @@ const ProductDetails:React.FC<productDetailsProps> = ({products, isDetails, deta
     const [numberOf, setNumberOf] = useState(1);
     const [fullPrice, setFullPrice] = useState(0);
     const [chosenModifiers, setChosenModifiers] = useState<ChosenIngredientI[]>([]);
-    const [isAllModifiers, setIsAllModifiers] = useState(false);
+    const [isAllModifiers, setIsAllModifiers] = useState<null | boolean>(null);
     const [requiredModifiers, setRequiredModifiers] = useState<IModifierScheme[]>([]);
     const [isValidation, setIsValidation] = useState(false);
     const [isMessage, setIsMessage] = useState(false);
     const [isScrolledTop, setIsScrolledTop] = useState(true);
     const [isSwiped, setIsSwiped] = useState(true);
     const detailsPageRef = useRef<HTMLDivElement>(null);
+    const [isBtnReady, setIsBtnReady] = useState(false);
     const formRef = useRef<HTMLFormElement>(null);
 
     const dispatch = useAppDispatch();
@@ -57,7 +59,7 @@ const ProductDetails:React.FC<productDetailsProps> = ({products, isDetails, deta
 
     /* Counting full price */
     useEffect(() => {
-        if(details !== undefined){
+        if(details !== undefined && isDetails){
             let allModifiersPrices = 0;
             chosenModifiers.forEach(modifier => {
                 allModifiersPrices += modifier.price;
@@ -65,7 +67,7 @@ const ProductDetails:React.FC<productDetailsProps> = ({products, isDetails, deta
 
             setFullPrice((details.price + allModifiersPrices) * numberOf);
         }
-    }, [numberOf, chosenModifiers, details]);
+    }, [numberOf, chosenModifiers, details, isDetails]);
 
     /* Reset details modal */
     useEffect(() => {
@@ -75,6 +77,8 @@ const ProductDetails:React.FC<productDetailsProps> = ({products, isDetails, deta
             setRequiredModifiers([]);
             setIsValidation(false);
             setIsMessage(false);
+            setFullPrice(0);
+            setIsAllModifiers(null);
             formRef.current?.reset();
             detailsPageRef.current?.scrollTo(0, 0);
         }
@@ -82,26 +86,36 @@ const ProductDetails:React.FC<productDetailsProps> = ({products, isDetails, deta
 
     /* Splitting modifiers */
     useEffect(() => {
-        let required: IModifierScheme[] = [];
-        if(details !== undefined && details.modifierScheme !== undefined && details.modifierScheme.length > 0){
-            details.modifierScheme.forEach(modifierScheme => {
-                if(modifierScheme.isRequired) required.push(modifierScheme);
-            });
-            setRequiredModifiers(required);
-        } else if(details !== undefined && details.modifierScheme === undefined){
-            setRequiredModifiers([]);
+        if(isDetails){
+            let required: IModifierScheme[] = [];
+            if(details !== undefined && details.modifierScheme !== undefined && details.modifierScheme.length > 0){
+                details.modifierScheme.forEach(modifierScheme => {
+                    if(modifierScheme.isRequired) required.push(modifierScheme);
+                });
+                setRequiredModifiers(required);
+            } else if(details !== undefined && details.modifierScheme === undefined){
+                setRequiredModifiers([]);
+            }
         }
-    }, [details]);
+    }, [details, isDetails]);
 
     /* Checking if all needed ingredients are chosen */
     useEffect(() => {
-        let neededModifiers = chosenModifiers.filter(modifier => modifier.inputName !== modifier.name);
-        if(details !== undefined && neededModifiers.length === requiredModifiers.length){
-            setIsAllModifiers(true);
-        } else {
-            setIsAllModifiers(false);
+        if(isDetails){
+            let neededModifiers = chosenModifiers.filter(modifier => modifier.inputName !== modifier.name);
+            if((details !== undefined && neededModifiers.length === requiredModifiers.length)|| details?.modifierScheme === undefined || details?.modifierScheme.length === 0){
+                setIsAllModifiers(true);
+            } else {
+                setIsAllModifiers(false);
+            }
         }
     }, [chosenModifiers, requiredModifiers, details]);
+
+    /* Checking if Telegram Main Button is ready to be showed */
+    useEffect(() => {
+        if(fullPrice !== 0 && isAllModifiers !== null) setIsBtnReady(true);
+        if(isAllModifiers === null) setIsBtnReady(false);
+    }, [fullPrice, isAllModifiers, isDetails]);
 
     /* Handlers */
     const onClickMinHandler = () => {
@@ -142,15 +156,20 @@ const ProductDetails:React.FC<productDetailsProps> = ({products, isDetails, deta
 
     /* Setting telegram main button */
     useEffect(() => {
-        if(isDetails){
+        if(isBtnReady){
             if(detailsPageRef.current !== null){
                 detailsPageRef.current.focus();
             }
-            if(!window.Telegram.WebApp.MainButton.isVisible && fullPrice !== 0)  window.Telegram.WebApp.MainButton.show();
-            if(fullPrice !== 0 && (isAllModifiers || details?.modifierScheme === undefined || details?.modifierScheme.length === 0)) window.Telegram.WebApp.MainButton.text = `Добавить в корзину ${fullPrice}₽`;
-            else if(fullPrice !== 0) window.Telegram.WebApp.MainButton.text = `Выберите опции ${fullPrice}₽`;
+            if(isAllModifiers === true) window.Telegram.WebApp.MainButton.text = `Добавить в корзину ${fullPrice}₽`;
+            else window.Telegram.WebApp.MainButton.text = `Выберите опции ${fullPrice}₽`;
+            if(!window.Telegram.WebApp.MainButton.isVisible) window.Telegram.WebApp.MainButton.show();
+            console.log(fullPrice, isAllModifiers)
         }
-    }, [isDetails, fullPrice, isAllModifiers]);
+    }, [isBtnReady]);
+
+    useEffect(() => {
+        console.log(isAllModifiers)
+    }, [isAllModifiers]);
 
 	const mainBtn = () => {
 		if(isDetails === false){

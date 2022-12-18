@@ -39,6 +39,7 @@ function App() {
 	const [searchParams, setSearchParams] = useSearchParams();
 	let companyId = searchParams.get('companyId');
 	if(companyId === null) companyId = '';
+	/* /?companyId=fabe396f-5dd5-435a-8559-48b2a44fb99f */
 
 	const productProps = {vendorId: companyId};
 	const {data: products, isLoading, isError} = useGetProductsMenuQuery(productProps);
