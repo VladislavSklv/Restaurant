@@ -17,9 +17,6 @@ const ProductsList:React.FC<productListProps> = ({productsTabs, setActiveTab, se
         <>
             {productsTabs !== undefined && productsTabs.map(productsTab => (
                 <div 
-                    /* onTouchMove={() => setActiveTab(productsTab.id.toString())} 
-                    onTouchStart={() => setActiveTab(productsTab.id.toString())} 
-                    onTouchEnd={() => setActiveTab(productsTab.id.toString())}  */
                     className='pt-54px' 
                     key={productsTab.id} 
                     id={productsTab.id.toString()}

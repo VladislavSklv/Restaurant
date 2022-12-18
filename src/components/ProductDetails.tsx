@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch } from '../hooks/hooks';
-import { addProduct } from '../redux/productSlice';
+import { useAppDispatch, useAppSelector } from '../hooks/hooks';
+import { addProduct, removeProduct } from '../redux/productSlice';
 import DragLine from './DragLine';
 import ModifiersForm from './ModifiersForm';
 import Message from './Message';
@@ -44,6 +44,7 @@ const ProductDetails:React.FC<productDetailsProps> = ({products, isDetails, deta
     const formRef = useRef<HTMLFormElement>(null);
 
     const dispatch = useAppDispatch();
+    const chosenProducts = useAppSelector(state => state.product.products);
     const navigate = useNavigate();
 
     /* Getting this details */
@@ -56,6 +57,19 @@ const ProductDetails:React.FC<productDetailsProps> = ({products, isDetails, deta
             });
         };
     }, [detailsId, isDetails]);
+
+    useEffect(() => {
+        if(details !== undefined && isDetails && (details.modifierScheme === undefined || details.modifierScheme.length === 0)){
+            let checker = false;
+            chosenProducts.forEach(product => {
+                if(product.id.toString() === details.id.toString()) {
+                    setNumberOf(product.quantity);
+                    checker = true;
+                }
+            });
+            if(!checker) setNumberOf(1);
+        }
+    }, [details, chosenProducts, isDetails]);
 
     /* Counting full price */
     useEffect(() => {
@@ -121,6 +135,7 @@ const ProductDetails:React.FC<productDetailsProps> = ({products, isDetails, deta
     const onClickMinHandler = () => {
         if(numberOf > 2 && details !== undefined) {
             setNumberOf(prev => prev - 1);
+            window.Telegram.WebApp.HapticFeedback.selectionChanged();
         };
         if(numberOf === 2 && details !== undefined){
             setNumberOf(1);
@@ -130,9 +145,11 @@ const ProductDetails:React.FC<productDetailsProps> = ({products, isDetails, deta
     const onClickMaxHandler = () => {
         if(numberOf > 0 && details !== undefined){
             setNumberOf(prev => prev + 1);
+            window.Telegram.WebApp.HapticFeedback.selectionChanged();
         };
         if(numberOf === 0 && details !== undefined){
             setNumberOf(prev => prev + 1);
+            window.Telegram.WebApp.HapticFeedback.selectionChanged();
         }
     };
 
@@ -156,20 +173,15 @@ const ProductDetails:React.FC<productDetailsProps> = ({products, isDetails, deta
 
     /* Setting telegram main button */
     useEffect(() => {
-        if(isBtnReady){
+        if(isBtnReady === true && fullPrice !== 0){
             if(detailsPageRef.current !== null){
                 detailsPageRef.current.focus();
             }
             if(isAllModifiers === true) window.Telegram.WebApp.MainButton.text = `Добавить в корзину ${fullPrice}₽`;
             else window.Telegram.WebApp.MainButton.text = `Выберите опции ${fullPrice}₽`;
             if(!window.Telegram.WebApp.MainButton.isVisible) window.Telegram.WebApp.MainButton.show();
-            console.log(fullPrice, isAllModifiers)
         }
-    }, [isBtnReady]);
-
-    useEffect(() => {
-        console.log(isAllModifiers)
-    }, [isAllModifiers]);
+    }, [isBtnReady, fullPrice]);
 
 	const mainBtn = () => {
 		if(isDetails === false){
@@ -177,15 +189,28 @@ const ProductDetails:React.FC<productDetailsProps> = ({products, isDetails, deta
 			navigate(`/cart/?companyId=${vendorId}`);
 		} else {
             if(isAllModifiers && details !== undefined){
-                dispatch(addProduct({
-                    myId: Date.now(),
-                    id: details.id.toString(),
-                    image: (details.images !== undefined && details.images[0] !== undefined) ? details.images[0] : '../images/food.svg',
-                    ingredients: chosenModifiers,
-                    name: details.name,
-                    price: details.price,
-                    quantity: numberOf
-                }));
+                if(details.modifierScheme === undefined || details.modifierScheme.length === 0){
+                    dispatch(removeProduct({id: details.id.toString(), myId: Date.now()}))
+                    dispatch(addProduct({
+                        myId: Date.now(),
+                        id: details.id.toString(),
+                        image: (details.images !== undefined && details.images[0] !== undefined) ? details.images[0] : '../images/food.svg',
+                        ingredients: chosenModifiers,
+                        name: details.name,
+                        price: details.price,
+                        quantity: numberOf
+                    }));
+                } else {
+                    dispatch(addProduct({
+                        myId: Date.now(),
+                        id: details.id.toString(),
+                        image: (details.images !== undefined && details.images[0] !== undefined) ? details.images[0] : '../images/food.svg',
+                        ingredients: chosenModifiers,
+                        name: details.name,
+                        price: details.price,
+                        quantity: numberOf
+                    }));
+                }
                 close();
             } else {
                 window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
@@ -221,7 +246,7 @@ const ProductDetails:React.FC<productDetailsProps> = ({products, isDetails, deta
     /* Haptic feedback */
     useEffect(() => {
         if(isDetails) window.Telegram.WebApp.HapticFeedback.selectionChanged();
-    }, [numberOf, chosenModifiers]);
+    }, [chosenModifiers]);
 
     return (
         <>
