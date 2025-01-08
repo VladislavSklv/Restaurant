@@ -8,13 +8,13 @@ import ProductsList from '../components/ProductsList';
 
 interface mainMenuPageProps {
     products: mainArray[];
-    vendorId: string;
+    companyId: string;
     totalPrice: number;
     isCart: boolean;
     setIsCart: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const MainMenuPage:React.FC<mainMenuPageProps> = ({products, vendorId, totalPrice, isCart, setIsCart}) => {
+const MainMenuPage:React.FC<mainMenuPageProps> = ({products, companyId, totalPrice, isCart, setIsCart}) => {
     const [isOpacity, setIsOpacity] = useState(false);
     const [isModal, setIsModal] = useState(false);
     const [isDetails, setIsDetails] = useState(false);
@@ -66,7 +66,7 @@ const MainMenuPage:React.FC<mainMenuPageProps> = ({products, vendorId, totalPric
             <div ref={mainMenuRef} className='mainMenu'>
                 <ProductsList myId={myId} setMyId={setMyId} setIsOpacity={setIsOpacity} setDetailsId={setDetailsId} setIsDetails={setIsDetails} setActiveTab={setActiveTab} productsTabs={products}/>
                 <div onClick={() => {setIsOpacity(false); setIsModal(false); setIsDetails(false)}} style={isOpacity ? {'opacity': '0.35', 'pointerEvents': 'all'} : {'opacity' : '0'}} className='opacity-block'></div>
-                <ProductDetails vendorId={vendorId} products={products} isCart={isCart} setIsCart={setIsCart} isDetails={isDetails} detailsId={parseInt(detailsId)} setIsDetails={setIsDetails} setIsOpacity={setIsOpacity} />
+                <ProductDetails companyId={companyId} products={products} isCart={isCart} setIsCart={setIsCart} isDetails={isDetails} detailsId={parseInt(detailsId)} setIsDetails={setIsDetails} setIsOpacity={setIsOpacity} />
                 <ModalNavBar mainMenuRef={mainMenuRef} activeTab={activeTab} setActiveTab={setActiveTab} isModal={isModal} setIsModal={setIsModal} setIsOpacity={setIsOpacity} productsTabs={products}/>
             </div>
         </div>

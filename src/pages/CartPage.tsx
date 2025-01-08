@@ -9,13 +9,13 @@ import { useAppDispatch, useAppSelector } from '../hooks/hooks';
 import { clearProducts } from '../redux/productSlice';
 
 interface cartPageProps{
-    vendorId: string;
+    companyId: string;
     totalPrice: number;
     isCart: boolean;
     setIsCart: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const CartPage: React.FC<cartPageProps> = ({vendorId, totalPrice, isCart, setIsCart}) => {
+const CartPage: React.FC<cartPageProps> = ({companyId, totalPrice, isCart, setIsCart}) => {
     const [placeNumber, setPlaceNumber] = useState('');
     const [numberOfPeople, setNumberOfPeople] = useState('');
     const [isModal1, setIsModal1] = useState(false);
@@ -42,7 +42,7 @@ const CartPage: React.FC<cartPageProps> = ({vendorId, totalPrice, isCart, setIsC
     let order: IOrder = {
         user_id: Telegram.WebApp.initDataUnsafe.user?.id!,
         place: parseInt(placeNumber),
-        vendor_id: vendorId,
+        vendor_id: companyId,
         products: [],
     };
 
@@ -64,7 +64,7 @@ const CartPage: React.FC<cartPageProps> = ({vendorId, totalPrice, isCart, setIsC
         } else if (isCart) {
             window.Telegram.WebApp.MainButton.hide();
             setIsCart(false);
-            navigate(`/?companyId=${vendorId}`);
+            navigate(`/?companyId=${companyId}`);
         }
     }, [isCart, products]);
 
@@ -93,7 +93,7 @@ const CartPage: React.FC<cartPageProps> = ({vendorId, totalPrice, isCart, setIsC
                 setTimeout(() => {
                     window.Telegram.WebApp.close();
                 }, 1500);
-                fetch(`https://etoolz.ru/api/v1/vendor/${vendorId}/order`, {
+                fetch(`https://etoolz.ru/api/v1/vendor/${companyId}/order`, {
                     body: JSON.stringify(order),
                     method: 'POST'
                 });
@@ -123,7 +123,7 @@ const CartPage: React.FC<cartPageProps> = ({vendorId, totalPrice, isCart, setIsC
                             if(ok){
                                 dispatch(clearProducts());
                                 setIsCart(false);
-                                navigate(`/?companyId=${vendorId}`); 
+                                navigate(`/?companyId=${companyId}`); 
                             }
                         })
                     }}

@@ -18,7 +18,7 @@ interface productDetailsProps {
     isCart: boolean;
     setIsCart: React.Dispatch<React.SetStateAction<boolean>>;
     products: mainArray[];
-    vendorId: string;
+    companyId: string;
 }
 
 export interface ChosenIngredientI{
@@ -28,7 +28,7 @@ export interface ChosenIngredientI{
     price: number;
 }
 
-const ProductDetails:React.FC<productDetailsProps> = ({products, isDetails, detailsId, setIsDetails, setIsOpacity, isCart, setIsCart, vendorId}) => {
+const ProductDetails:React.FC<productDetailsProps> = ({products, isDetails, detailsId, setIsDetails, setIsOpacity, isCart, setIsCart, companyId}) => {
     const [details, setDetails] = useState<IProduct>();
     const [numberOf, setNumberOf] = useState(1);
     const [fullPrice, setFullPrice] = useState(0);
@@ -186,7 +186,7 @@ const ProductDetails:React.FC<productDetailsProps> = ({products, isDetails, deta
 	const mainBtn = () => {
 		if(isDetails === false){
 			setIsCart(true);
-			navigate(`/cart/?companyId=${vendorId}`);
+			navigate(`/cart/?companyId=${companyId}`);
 		} else {
             if(isAllModifiers && details !== undefined){
                 if(details.modifierScheme === undefined || details.modifierScheme.length === 0){

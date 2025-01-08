@@ -31,6 +31,10 @@ export interface IProduct {
     modifierScheme: IModifierScheme[];
 }
 
+export interface Idata {
+    data: mainArray[];
+}
+
 export interface mainArray {
     id: number;
     name: string;
@@ -53,7 +57,7 @@ export interface IProductsTab {
 }
  */
 export interface ProductMenuProps{
-    vendorId: string;
+    companyId: string;
 }
 
 export interface IIngredient {
@@ -81,7 +85,7 @@ export interface IProductDetails {
 }
 
 export interface ProductDetailsProps{
-    vendorId: string;
+    companyId: string;
     productId: string;
 } */
 
@@ -103,10 +107,10 @@ export interface IOrder {
 
 export const vendorApi = createApi({
     reducerPath: 'vendorApi',
-    baseQuery: fetchBaseQuery({baseUrl: 'https://etoolz.ru/api/v1/companies/'}),
+    baseQuery: fetchBaseQuery({baseUrl: 'https://menu.silkroadpro.com/api/v1/companies/'}),
     endpoints: (builder) => ({
-        getProductsMenu: builder.query<mainArray[], ProductMenuProps>({
-            query: ({vendorId}) => `${vendorId}/menu/`,
+        getProductsMenu: builder.query<Idata, ProductMenuProps>({
+            query: ({companyId}) => `${companyId}/menu/`,
         })
     }),
 });

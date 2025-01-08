@@ -36,15 +36,19 @@ interface IMyMainObjects {
 }
 
 function App() {
-	const [searchParams, setSearchParams] = useSearchParams();
-	let companyId = searchParams.get('companyId');
-	if(companyId === null) companyId = '';
+	/* const [searchParams, setSearchParams] = useSearchParams();
+	let companyId = searchParams.get('companyId'); */
+	/* if(companyId === null) companyId = ''; */
 	/* /?companyId=fabe396f-5dd5-435a-8559-48b2a44fb99f */
-
-	const productProps = {vendorId: companyId};
+	const companyId = '0dbf041b-b529-42a9-a45c-23f8cfed6ba9';
+	const productProps = {companyId: companyId};
 	const {data: products, isLoading, isError} = useGetProductsMenuQuery(productProps);
 	const [totalPrice, setTotalPrice] = useState(0);
 	const [isCart, setIsCart] = useState(false);
+
+	useEffect(() => {
+		console.log(products, isLoading, isError);
+	}, [products, isLoading, isError]);
 
 	const {products: finalProducts} = useAppSelector(state => state.product);
 	const navigate = useNavigate();
@@ -78,7 +82,7 @@ function App() {
 	
 	const backBtn = () => {
 		if(isCart){
-			navigate(`/?companyId=${productProps.vendorId}`);
+			navigate(`/?companyId=${productProps.companyId}`);
 			setIsCart(false);
 		} else {
 			window.Telegram.WebApp.close();
@@ -105,10 +109,10 @@ function App() {
 
 	return (
 		<Routes>
-			{products !== undefined && <Route path='/' element={<MainMenuPage isCart={isCart} setIsCart={setIsCart} totalPrice={totalPrice} vendorId={productProps.vendorId} products={products} />} />}
+			{products && products !== undefined && <Route path='/' element={<MainMenuPage isCart={isCart} setIsCart={setIsCart} totalPrice={totalPrice} companyId={productProps.companyId} products={products.data} />} />}
 			{isLoading && <Route path='/' element={<Loader/>} />}
 			{isError && <Route path='/' element={<ErrorBlock/>} />}
-			<Route path='/cart' element={<CartPage isCart={isCart} setIsCart={setIsCart} totalPrice={totalPrice} vendorId={productProps.vendorId} />}/>
+			<Route path='/cart' element={<CartPage isCart={isCart} setIsCart={setIsCart} totalPrice={totalPrice} companyId={productProps.companyId} />}/>
 		</Routes>
 	);
 }

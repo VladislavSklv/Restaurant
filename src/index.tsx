@@ -23,6 +23,8 @@ const store = configureStore({
 
 window.Telegram.WebApp.expand();
 
+console.log(window.Telegram.WebApp.version);
+
 root.render(
 	<Provider store={store}>
 		<BrowserRouter>
