@@ -139,7 +139,7 @@ const CartPage: React.FC<cartPageProps> = ({companyId, totalPrice, isCart, setIs
                 style={isOpacity ? {'opacity': '0.35', 'pointerEvents': 'all'} : {'opacity' : '0', 'pointerEvents': 'none'}} 
                 className='opacity-block'
             ></div>
-            <div className='cart__total'>Общая стоимость <span>{totalPrice}₽</span></div>
+            <div className='cart__total'>Общая стоимость <span>{totalPrice} so’m</span></div>
             <Modal close={close} isModal={isModal1} title='Условия заказа' text='Сядьте за любой свободный стол и введи номер, напечатанный на стикере, наклеенном на столе' children={
                 <>
                     <form ref={formsRef}>

@@ -21,7 +21,7 @@ const MyCheckbox: React.FC<MyCheckboxProps> = ({inputName, id, label, price, onC
                 value={id}
                 onClick={() => onClickHandler && onClickHandler({id: parseInt(id),inputName, price, name: label})}
             />
-            <label htmlFor={forId}>{label} <span>{price} ₽</span></label>   
+            <label htmlFor={forId}>{label} <span>{price} so’m</span></label>   
         </>
     );
 };

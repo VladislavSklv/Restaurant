@@ -55,7 +55,7 @@ const ProductInCart:React.FC<prodcutInCartProps> = ({product}) => {
                     </p>
                 }
                 <div className='cart-item__wrapper'>
-                    <span className='cart-item__price'>{(product.price + ingredientsPrice) * numberOf}₽</span>
+                    <span className='cart-item__price'>{(product.price + ingredientsPrice) * numberOf} so’m</span>
                     <MinMaxBtns onClickMin={onClickMinHandler} onClickMax={onClickMaxHandler} numberOf={numberOf} />
                 </div>
             </div>

@@ -21,7 +21,7 @@ const MyRadio: React.FC<MyRadioProps> = ({inputName, id, label, price, onClickHa
                 value={id}
                 onClick={() => onClickHandler && onClickHandler({id: parseInt(id), inputName, price, name: label})}
             />
-            <label htmlFor={forId}>{label} <span>{price} ₽</span></label>   
+            <label htmlFor={forId}>{label} <span>{price} so’m</span></label>   
         </>
     );
 };

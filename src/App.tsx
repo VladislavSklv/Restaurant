@@ -36,11 +36,10 @@ interface IMyMainObjects {
 }
 
 function App() {
-	/* const [searchParams, setSearchParams] = useSearchParams();
-	let companyId = searchParams.get('companyId'); */
-	/* if(companyId === null) companyId = ''; */
-	/* /?companyId=fabe396f-5dd5-435a-8559-48b2a44fb99f */
-	const companyId = '0dbf041b-b529-42a9-a45c-23f8cfed6ba9';
+	const [searchParams, setSearchParams] = useSearchParams();
+	let companyId = searchParams.get('companyId');
+	if(companyId === null) companyId = '';
+	/* /?companyId=0dbf041b-b529-42a9-a45c-23f8cfed6ba9 */
 	const productProps = {companyId: companyId};
 	const {data: products, isLoading, isError} = useGetProductsMenuQuery(productProps);
 	const [totalPrice, setTotalPrice] = useState(0);

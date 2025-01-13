@@ -119,13 +119,13 @@ const Product:React.FC<productProps> = ({product, setDetailsId, setIsDetails, se
                 >{product.name}</h2>
                 <p className='product__weight'>
                     <span style={numberOf === 0 ? {opacity: 1, pointerEvents: 'all', transitionDelay: '150ms', transform: 'translateX(0)'} : {opacity: 0, pointerEvents: 'none', transitionDelay: '0ms', transform: 'translateX(100%)'}} className='product__noprice'>{product.weight && `${product.weight} ${product.measure} `}</span>
-                    <span style={numberOf === 0 ? {opacity: 0, pointerEvents: 'none', transitionDelay: '0ms'} : {opacity: 1, pointerEvents: 'all', transitionDelay: '150ms'}} className='product__price'>{price}₽ {product.weight && `/ ${product.weight} ${product.measure} `}</span>
+                    <span style={numberOf === 0 ? {opacity: 0, pointerEvents: 'none', transitionDelay: '0ms'} : {opacity: 1, pointerEvents: 'all', transitionDelay: '150ms'}} className='product__price'>{price} so’m {product.weight && `/ ${product.weight} ${product.measure} `}</span>
                 </p>
                  <button 
                         style={numberOf === 0 ? {opacity: 1, pointerEvents: 'all', transitionDelay: '150ms'} : {opacity: 0, pointerEvents: 'none', transitionDelay: '0ms'}}
                         onClick={() => onClickMaxHandler()}
                         className='product__btn'
-                    >{product.price}₽</button>
+                    >{product.price} so’m</button>
                 <MinMaxBtns isAnim={true} numberOf={numberOf} onClickMax={onClickMaxHandler} onClickMin={onClickMinHandler} />
             </div>
         </div>

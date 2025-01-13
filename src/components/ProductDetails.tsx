@@ -177,8 +177,8 @@ const ProductDetails:React.FC<productDetailsProps> = ({products, isDetails, deta
             if(detailsPageRef.current !== null){
                 detailsPageRef.current.focus();
             }
-            if(isAllModifiers === true) window.Telegram.WebApp.MainButton.text = `Добавить в корзину ${fullPrice}₽`;
-            else window.Telegram.WebApp.MainButton.text = `Выберите опции ${fullPrice}₽`;
+            if(isAllModifiers === true) window.Telegram.WebApp.MainButton.text = `Добавить в корзину ${fullPrice} so’m`;
+            else window.Telegram.WebApp.MainButton.text = `Выберите опции ${fullPrice} so’m`;
             if(!window.Telegram.WebApp.MainButton.isVisible) window.Telegram.WebApp.MainButton.show();
         }
     }, [isBtnReady, fullPrice]);

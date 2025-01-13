@@ -33,7 +33,7 @@ const ModifiersForm:React.FC<modifiersFormProps> = ({details, isDetails, isValid
 
     return (
         <form ref={formRef} className='product-id__form'>
-            {(requiredModifiers !== undefined && requiredModifiers.length) > 0 && 
+            {(requiredModifiers !== undefined && requiredModifiers.length > 0) && 
                 <>
                     {requiredModifiers.map(modifierScheme => 
                         <ModifiersTab isDetails={isDetails} isValidation={isValidation} key={modifierScheme.id} setChosenIngredients={setChosenModifiers} groupName={modifierScheme.name} modifiers={modifierScheme.modifiers} isCheckbox={false} />
